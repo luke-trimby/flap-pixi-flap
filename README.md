@@ -1,6 +1,8 @@
-# Pixi.js Project #
+# Luke Trimby - Flap Pixi Flap - Flappy Bird Clone #
 
-A generic frontend **Pixi.js** project boiler plate in **TypeScript** using **Webpack**.
+A coding challenge made with Typescript and PIXI.js.
+It all started with the boilerplate code at: https://github.com/yahiko00/PixiProject
+Re-using some code and ideas from old projects (see zips in `./ref/`)
 
 Main features:
 
@@ -15,7 +17,6 @@ Main dependencies:
 * **Application Server**: [Node](https://nodejs.org/en/)
 * **Compiler**: [TypeScript](https://github.com/Microsoft/TypeScript)
 * **Bundler**: [Webpack](https://github.com/webpack/webpack)
-* **Unit Test Runner**: [Mocha](https://github.com/mochajs/mocha)
 * **Pixi.js**: [Pixi.js](http://www.pixijs.com/)
 
 
@@ -23,7 +24,7 @@ Main dependencies:
 
 Node, TypeScript and TSLint should be installed globally.
 
-	$> git clone https://github.com/yahiko00/PixiProject.git <new folder>
+	$> git clone git@bitbucket.org:lukes-personal/flap-pixi-flap.git <new folder>
 	$> cd <new folder>
 	$> git init
 	$> npm install
@@ -35,7 +36,7 @@ Commands should be run under a **bash** shell.
 
 The following command builds and run the project in development mode with Hot Reload.
 
-	$> npm run serve
+	$> npm start
 
 The following command builds the project in production mode.
 
@@ -46,7 +47,7 @@ For more predefined commands, see `package.json`, item `scripts`.
 
 ## Contributors ##
 
-yahiko
+Luke Trimby
 
 
 ## Licence ##
