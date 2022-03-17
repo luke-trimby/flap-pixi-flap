@@ -2,8 +2,8 @@
 import { AbstractService } from "../../data/abstract/abstract-service";
 import { IAssetConfig } from "../../data/interface/asset-config";
 import { ILoadingPhase } from "../../data/interface/loading-phase";
-import { Log } from "../../util/log";
 import PIXI = require("pixi.js");
+import { Log } from "enhance-log";
 
 export class PreloaderSerice extends AbstractService {
 
@@ -67,7 +67,7 @@ export class PreloaderSerice extends AbstractService {
     }
 
     protected onError(error: Error, loader: PIXI.Loader): void {
-        Log.throw(0, error.message);
+        Log.throw(error.message);
     }
 
     protected onComplete(loader: PIXI.Loader, resources: PIXI.LoaderResource[]): void {
