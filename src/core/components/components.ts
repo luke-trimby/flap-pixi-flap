@@ -2,7 +2,7 @@ import { AbstractComponent } from "../data/abstract/abstract-component";
 import { ClassType } from "../data/type/class-type";
 
 export class Components {
-    
+
     public static init() {
         this.components.forEach((component) => component.init());
     }

@@ -29,7 +29,7 @@ export class FlapSetup extends CoreSetup {
             { name: "layer-two" },
             { name: "layer-three" },
             { name: "layer-four" },
-            { name: "layer-five" }
+            { name: "preloader-layer" }
         );
     }
 

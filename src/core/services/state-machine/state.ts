@@ -1,4 +1,3 @@
-import { Log } from "enhance-log";
 import { Services } from "../services";
 import { StateMachineService } from "./state-machine-service";
 
@@ -10,11 +9,11 @@ export class State {
         this.stateName = name;
         this.stateIsInit = isInit;
     }
-    
+
     public get name(): string {
         return this.stateName;
     }
-    
+
     public get isInit(): boolean {
         return this.stateIsInit;
     }

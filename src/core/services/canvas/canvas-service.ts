@@ -1,8 +1,8 @@
-import { Size } from "../../data/size";
-import { AbstractService } from "../../data/abstract/abstract-service";
-import { ICanvasProperties } from "../../data/interface/canvas-properties";
 import { Log } from "enhance-log";
 import { autoDetectRenderer, Container, Renderer, Ticker } from "pixi.js";
+import { AbstractService } from "../../data/abstract/abstract-service";
+import { ICanvasProperties } from "../../data/interface/canvas-properties";
+import { Size } from "../../data/size";
 
 export class CanvasService extends AbstractService {
     private ratio: number;
@@ -40,10 +40,10 @@ export class CanvasService extends AbstractService {
         }
     }
 
-    private injectCanvas(target:string, win: Window = window) {
+    private injectCanvas(target: string, win: Window = window) {
         this.canvasTarget = document.getElementById(target) as HTMLDivElement;
         if (this.canvasTarget) {
-            var size: Size = new Size(this.size.width, this.size.height);
+            let size: Size = new Size(this.size.width, this.size.height);
             this.ratio = this.size.width / this.size.height;
             this.renderEngine = this.detectRenderEngine(size);
 
@@ -58,12 +58,13 @@ export class CanvasService extends AbstractService {
             this.windowResize(win);
 
             this.ticker = new Ticker();
+            this.ticker.add(() => this.render());
             this.ticker.start();
         }
     }
 
-    private detectRenderEngine(size: Size):any {
-        var pixiProperties = {
+    private detectRenderEngine(size: Size): any {
+        const pixiProperties = {
             width: size.width,
             height: size.height,
             backgroundColor: this.properties.canvasColor
@@ -73,7 +74,8 @@ export class CanvasService extends AbstractService {
     }
 
     private getBestCanvasSizeForWindow(currentWindow: Window): Size {
-        var w: number, h: number;
+        let w: number
+        let h: number;
         if (currentWindow.innerWidth / window.innerHeight >= this.ratio) {
             w = currentWindow.innerHeight * this.ratio;
             h = currentWindow.innerHeight;
@@ -85,7 +87,7 @@ export class CanvasService extends AbstractService {
     }
 
     private windowResize(currentWindow: Window) {
-        var size: Size = this.getBestCanvasSizeForWindow(currentWindow);
+        const size: Size = this.getBestCanvasSizeForWindow(currentWindow);
         this.renderEngine.view.style.height = size.height + "px";
         this.renderEngine.view.style.width = size.width + "px";
         if (this.properties.centered) {

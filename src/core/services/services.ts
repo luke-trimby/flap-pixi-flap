@@ -1,8 +1,8 @@
-import { ClassType } from "../data/type/class-type";
 import { AbstractService } from "../data/abstract/abstract-service";
+import { ClassType } from "../data/type/class-type";
 
 export class Services {
-    
+
     public static init() {
         this.services.forEach((service) => service.init());
     }

@@ -12,7 +12,7 @@ export class StateTransition {
     public get from(): string {
         return this.fromName;
     }
-    
+
     public get to(): string {
         return this.toName;
     }

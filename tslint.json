@@ -4,8 +4,6 @@
         "no-default-export": true,
         "ordered-imports": true,
         "no-unused-expression": false,
-        "no-unused-expression-chai": true,
-        "no-unused-variable": true,
         "no-namespace": false,
         "no-bitwise": false,
         "cyclomatic-complexity": true,
@@ -71,6 +69,5 @@
         "unified-signatures": false
     },
     "rulesDirectory": [
-        "tslint-no-unused-expression-chai"
     ]
 }

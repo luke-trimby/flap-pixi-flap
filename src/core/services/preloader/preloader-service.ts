@@ -1,13 +1,17 @@
 
+import { Log } from "enhance-log";
+import { Loader, LoaderResource } from "pixi.js";
+import { Signal } from "signals";
 import { AbstractService } from "../../data/abstract/abstract-service";
 import { IAssetConfig } from "../../data/interface/asset-config";
 import { ILoadingStage } from "../../data/interface/loading-phase";
-import { Log } from "enhance-log";
-import { Signal } from "signals";
-import { Loader, LoaderResource } from "pixi.js";
+import { AssetService } from "../asset/asset-service";
+import { Services } from "../services";
 
 export class PreloaderSerice extends AbstractService {
 
+    public onLoadingStarted: Signal;
+    public onLoadingProgress: Signal;
     public onStageLoaded: Signal;
     public onAllStagesLoaded: Signal;
     protected pixiLoader: Loader;
@@ -19,6 +23,8 @@ export class PreloaderSerice extends AbstractService {
 
     public init(): void {
         Log.d(`[PreloaderService] Initialising`);
+        this.onLoadingStarted = new Signal();
+        this.onLoadingProgress = new Signal();
         this.onStageLoaded = new Signal();
         this.onAllStagesLoaded = new Signal();
         this.loadingStagesLoaded = 0;
@@ -32,6 +38,17 @@ export class PreloaderSerice extends AbstractService {
     }
 
     public load(): void {
+        this.onLoadingStarted.dispatch();
+        this.loadNextStage();
+    }
+
+    public addLoadingStages(...stages: ILoadingStage[]): void {
+        Log.i(`[PreloaderService] Adding loading stages`, ...stages);
+        this.loadingStages.push(...stages);
+        this.loadingStagesTotal = this.loadingStages.length;
+    }
+
+    protected loadNextStage(): void {
         this.currentLoadingStage = this.loadingStages.shift();
         this.loadingStageBindings = [];
         Log.d(`[PreloaderService] Loading next stage`, this.currentLoadingStage);
@@ -61,14 +78,9 @@ export class PreloaderSerice extends AbstractService {
         this.pixiLoader.load();
     }
 
-    public addLoadingStages(...stages: ILoadingStage[]): void {
-        Log.i(`[PreloaderService] Adding loading stages`, ...stages);
-        this.loadingStages.push(...stages);
-        this.loadingStagesTotal = this.loadingStages.length;
-    }
-
     protected onProgress(loader: Loader): void {
         Log.i(`[PreloaderService] onProgress`, loader.progress);
+        this.onLoadingProgress.dispatch(loader.progress, this.loadingStagesLoaded, this.loadingStagesTotal);
     }
 
     protected onLoad(loader: Loader, resource: LoaderResource): void {
@@ -80,12 +92,13 @@ export class PreloaderSerice extends AbstractService {
     }
 
     protected onComplete(loader: Loader, resources: LoaderResource[]): void {
-        Log.i(`[PreloaderService] Loading phase complete`, this.currentLoadingStage.name);
+        Log.i(`[PreloaderService] Loading phase complete`, this.currentLoadingStage.name, resources);
+        Services.get(AssetService).addResources(resources);
         this.loadingStagesLoaded++;
         this.onStageLoaded.dispatch(this.currentLoadingStage.name, this.loadingStagesLoaded, this.loadingStagesTotal);
         if (this.loadingStages.length > 0) {
             this.loadingStageBindings.forEach((binding) => binding.detach());
-            this.load();
+            this.loadNextStage();
         } else {
             Log.i(`[PreloaderService] All loading stages complete`);
             this.onAllStagesLoaded.dispatch();
