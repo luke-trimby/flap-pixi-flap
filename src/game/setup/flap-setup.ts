@@ -7,7 +7,7 @@ export class FlapSetup extends CoreSetup {
     public registerAssets(): void {
         super.registerAssets();
 
-        Services.get(PreloaderSerice).addLoadingPhases(
+        Services.get(PreloaderSerice).addLoadingStages(
             {
                 name: "GameAssets",
                 assets: [

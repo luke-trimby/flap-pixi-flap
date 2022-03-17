@@ -1,20 +1,28 @@
 
 import { AbstractService } from "../../data/abstract/abstract-service";
 import { IAssetConfig } from "../../data/interface/asset-config";
-import { ILoadingPhase } from "../../data/interface/loading-phase";
+import { ILoadingStage } from "../../data/interface/loading-phase";
 import PIXI = require("pixi.js");
 import { Log } from "enhance-log";
+import { Signal } from "signals";
 
 export class PreloaderSerice extends AbstractService {
 
-    protected loadingPhases: ILoadingPhase[];
-    protected currentPhase: ILoadingPhase;
+    public onStageLoaded: Signal;
+    public onAllStagesLoaded: Signal;
     protected pixiLoader: PIXI.Loader;
-    protected phaseBindings: any[];
+    protected loadingStages: ILoadingStage[];
+    protected loadingStageBindings: any[];
+    protected loadingStagesTotal: number;
+    protected loadingStagesLoaded: number;
+    protected currentLoadingStage: ILoadingStage;
 
     public init(): void {
-        Log.d(`[PreloaderSerice] Initialising Preloader`);
-        this.loadingPhases = [];
+        Log.d(`[PreloaderService] Initialising`);
+        this.onStageLoaded = new Signal();
+        this.onAllStagesLoaded = new Signal();
+        this.loadingStagesLoaded = 0;
+        this.loadingStages = [];
         this.pixiLoader = new PIXI.Loader();
 
         this.pixiLoader.onProgress.add((loader: PIXI.Loader) => this.onProgress(loader));
@@ -24,38 +32,39 @@ export class PreloaderSerice extends AbstractService {
     }
 
     public load(): void {
-        this.currentPhase = this.loadingPhases.shift();
-        this.phaseBindings = [];
-        Log.d(`[PreloaderSerice] Loading phase`, this.currentPhase);
+        this.currentLoadingStage = this.loadingStages.shift();
+        this.loadingStageBindings = [];
+        Log.d(`[PreloaderService] Loading next stage`, this.currentLoadingStage);
 
-        if (this.currentPhase.onProgress) {
-            const onProgressBinding = this.pixiLoader.onProgress.add((loader: PIXI.Loader) => this.currentPhase.onProgress(loader));
-            this.phaseBindings.push(onProgressBinding);
+        if (this.currentLoadingStage.onProgress) {
+            const onProgressBinding = this.pixiLoader.onProgress.add((loader: PIXI.Loader) => this.currentLoadingStage.onProgress(loader));
+            this.loadingStageBindings.push(onProgressBinding);
         }
-        if (this.currentPhase.onLoad) {
-            const onLoadBinding = this.pixiLoader.onLoad.add((loader: PIXI.Loader, resource: PIXI.LoaderResource) => this.currentPhase.onLoad(loader, resource));
-            this.phaseBindings.push(onLoadBinding);
+        if (this.currentLoadingStage.onLoad) {
+            const onLoadBinding = this.pixiLoader.onLoad.add((loader: PIXI.Loader, resource: PIXI.LoaderResource) => this.currentLoadingStage.onLoad(loader, resource));
+            this.loadingStageBindings.push(onLoadBinding);
         }
-        if (this.currentPhase.onError) {
-            const onErrorBinding = this.pixiLoader.onError.add((error: Error, loader: PIXI.Loader) => this.currentPhase.onError(error, loader));
-            this.phaseBindings.push(onErrorBinding);
+        if (this.currentLoadingStage.onError) {
+            const onErrorBinding = this.pixiLoader.onError.add((error: Error, loader: PIXI.Loader) => this.currentLoadingStage.onError(error, loader));
+            this.loadingStageBindings.push(onErrorBinding);
         }
-        if (this.currentPhase.onComplete) {
-            const onCompleteBinding = this.pixiLoader.onComplete.add((loader: PIXI.Loader, resources: PIXI.LoaderResource[]) => this.currentPhase.onComplete(loader, resources));
-            this.phaseBindings.push(onCompleteBinding);
+        if (this.currentLoadingStage.onComplete) {
+            const onCompleteBinding = this.pixiLoader.onComplete.add((loader: PIXI.Loader, resources: PIXI.LoaderResource[]) => this.currentLoadingStage.onComplete(loader, resources));
+            this.loadingStageBindings.push(onCompleteBinding);
         }
 
-        this.currentPhase.assets.forEach((assetConfig: IAssetConfig) => {
-            Log.i(`[PreloaderSerice] Register asset`, assetConfig.name);
+        this.currentLoadingStage.assets.forEach((assetConfig: IAssetConfig) => {
+            Log.i(`[PreloaderService] Register asset`, assetConfig.name);
             this.pixiLoader.add(assetConfig.name, assetConfig.path);
         });
 
         this.pixiLoader.load();
     }
 
-    public addLoadingPhases(...phases: ILoadingPhase[]): void {
-        Log.i(`[PreloaderService] Adding loading phases`, ...phases);
-        this.loadingPhases.push(...phases);
+    public addLoadingStages(...stages: ILoadingStage[]): void {
+        Log.i(`[PreloaderService] Adding loading stages`, ...stages);
+        this.loadingStages.push(...stages);
+        this.loadingStagesTotal = this.loadingStages.length;
     }
 
     protected onProgress(loader: PIXI.Loader): void {
@@ -71,10 +80,15 @@ export class PreloaderSerice extends AbstractService {
     }
 
     protected onComplete(loader: PIXI.Loader, resources: PIXI.LoaderResource[]): void {
-        Log.i(`[PreloaderService] Loading phase complete`, this.currentPhase.name);
-        if (this.loadingPhases.length > 0) {
-            this.phaseBindings.forEach((binding) => binding.detach());
+        Log.i(`[PreloaderService] Loading phase complete`, this.currentLoadingStage.name);
+        this.loadingStagesLoaded++;
+        this.onStageLoaded.dispatch(this.currentLoadingStage.name, this.loadingStagesLoaded, this.loadingStagesTotal);
+        if (this.loadingStages.length > 0) {
+            this.loadingStageBindings.forEach((binding) => binding.detach());
             this.load();
+        } else {
+            Log.i(`[PreloaderService] All loading stages complete`);
+            this.onAllStagesLoaded.dispatch();
         }
     }
 }

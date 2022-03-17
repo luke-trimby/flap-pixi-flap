@@ -2,6 +2,7 @@ import { Size } from "../../data/size";
 import { AbstractService } from "../../data/abstract/abstract-service";
 import PIXI = require("pixi.js");
 import { ICanvasProperties } from "../../data/interface/canvas-properties";
+import { Log } from "enhance-log";
 
 export class CanvasService extends AbstractService {
     private ratio: number;
@@ -9,12 +10,13 @@ export class CanvasService extends AbstractService {
     private scale: Size;
     private renderEngine: PIXI.Renderer;
     private canvasTarget: HTMLDivElement;
-    private stage: PIXI.Container;
+    private gameStage: PIXI.Container;
     private ticker: PIXI.Ticker;
     private htmlLayerContainerDiv: HTMLDivElement;
 
     constructor(private properties: ICanvasProperties) {
         super();
+        Log.d(`[CanvasService] Initialising`);
     }
 
     public init(): void {
@@ -24,8 +26,12 @@ export class CanvasService extends AbstractService {
         this.injectCanvas(this.properties.canvasContainer);
     }
 
+    public get stage(): PIXI.Container {
+        return this.gameStage;
+    }
+
     public render() {
-        this.renderEngine.render(this.stage);
+        this.renderEngine.render(this.gameStage);
     }
 
     public registerForUpdates(updateFunc: () => any): void {
@@ -41,7 +47,7 @@ export class CanvasService extends AbstractService {
             this.ratio = this.size.width / this.size.height;
             this.renderEngine = this.detectRenderEngine(size);
 
-            this.stage = new PIXI.Container();
+            this.gameStage = new PIXI.Container();
             this.canvasTarget.insertBefore(this.renderEngine.view, this.canvasTarget.firstChild);
 
             size = this.getBestCanvasSizeForWindow(win);

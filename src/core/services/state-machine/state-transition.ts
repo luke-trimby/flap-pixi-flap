@@ -1,24 +1,19 @@
 
 export class StateTransition {
-    protected fromStateName: string;
-    protected toStateName: string;
+    protected fromName: string;
+    protected toName: string;
     protected count: number;
 
-    constructor(fromStateName: string, toStateName: string, count: number = Infinity) {
-        this.fromStateName = fromStateName;
-        this.toStateName = toStateName;
-        this.count = count;
+    constructor(from: string, to: string) {
+        this.fromName = from;
+        this.toName = to;
     }
 
-    public getFromStateName(): string {
-        return this.fromStateName;
+    public get from(): string {
+        return this.fromName;
     }
     
-    public getToStateName(): string {
-        return this.toStateName;
-    }
-    
-    public getCount(): number {
-        return this.count;
+    public get to(): string {
+        return this.toName;
     }
 }
