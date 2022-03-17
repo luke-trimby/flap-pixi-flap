@@ -1,6 +1,9 @@
+import { LayerService } from "../../core/services/layer/layer-service";
 import { PreloaderSerice } from "../../core/services/preloader/preloader-service";
 import { Services } from "../../core/services/services";
+import { StateMachineService } from "../../core/services/state-machine/state-machine-service";
 import { CoreSetup } from "../../core/setup/core-setup";
+import { InitState } from "../states/init-state";
 
 export class FlapSetup extends CoreSetup {
 
@@ -18,5 +21,22 @@ export class FlapSetup extends CoreSetup {
                 ]
             }
         );
+    }
+
+    public registerLayers(): void {
+        Services.get(LayerService).registerLayers(
+            { name: "layer-one" },
+            { name: "layer-two" },
+            { name: "layer-three" },
+            { name: "layer-four" },
+            { name: "layer-five" }
+        );
+    }
+
+    public registerStates(): void {
+        const stateMachine: StateMachineService = Services.get(StateMachineService);
+
+        stateMachine
+            .addState(new InitState("init", true))
     }
 }

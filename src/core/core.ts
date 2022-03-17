@@ -1,6 +1,7 @@
 import { Log } from "enhance-log";
 import { Components } from "./components/components";
 import { CanvasService } from "./services/canvas/canvas-service";
+import { LayerService } from "./services/layer/layer-service";
 import { PreloaderSerice } from "./services/preloader/preloader-service";
 import { Services } from "./services/services";
 import { StateMachineService } from "./services/state-machine/state-machine-service";
@@ -20,6 +21,7 @@ export class Core {
         setupClasses.forEach((setup: CoreSetup) => setup.registerSounds());
         Log.w(`[Core] initialising Layers`);
         setupClasses.forEach((setup: CoreSetup) => setup.registerLayers());
+        Services.get(LayerService).init();
         Log.w(`[Core] initialising Components`);
         setupClasses.forEach((setup: CoreSetup) => setup.registerComponents());
         Components.init();

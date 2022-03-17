@@ -1,17 +1,17 @@
 import { Size } from "../../data/size";
 import { AbstractService } from "../../data/abstract/abstract-service";
-import PIXI = require("pixi.js");
 import { ICanvasProperties } from "../../data/interface/canvas-properties";
 import { Log } from "enhance-log";
+import { autoDetectRenderer, Container, Renderer, Ticker } from "pixi.js";
 
 export class CanvasService extends AbstractService {
     private ratio: number;
     private size: Size;
     private scale: Size;
-    private renderEngine: PIXI.Renderer;
+    private renderEngine: Renderer;
     private canvasTarget: HTMLDivElement;
-    private gameStage: PIXI.Container;
-    private ticker: PIXI.Ticker;
+    private gameStage: Container;
+    private ticker: Ticker;
     private htmlLayerContainerDiv: HTMLDivElement;
 
     constructor(private properties: ICanvasProperties) {
@@ -26,7 +26,7 @@ export class CanvasService extends AbstractService {
         this.injectCanvas(this.properties.canvasContainer);
     }
 
-    public get stage(): PIXI.Container {
+    public get stage(): Container {
         return this.gameStage;
     }
 
@@ -47,7 +47,7 @@ export class CanvasService extends AbstractService {
             this.ratio = this.size.width / this.size.height;
             this.renderEngine = this.detectRenderEngine(size);
 
-            this.gameStage = new PIXI.Container();
+            this.gameStage = new Container();
             this.canvasTarget.insertBefore(this.renderEngine.view, this.canvasTarget.firstChild);
 
             size = this.getBestCanvasSizeForWindow(win);
@@ -57,7 +57,7 @@ export class CanvasService extends AbstractService {
             win.addEventListener('resize', () => this.windowResize(win));
             this.windowResize(win);
 
-            this.ticker = new PIXI.Ticker();
+            this.ticker = new Ticker();
             this.ticker.start();
         }
     }
@@ -68,7 +68,7 @@ export class CanvasService extends AbstractService {
             height: size.height,
             backgroundColor: this.properties.canvasColor
         };
-        this.renderEngine = PIXI.autoDetectRenderer(pixiProperties);
+        this.renderEngine = autoDetectRenderer(pixiProperties);
         return this.renderEngine;
     }
 
