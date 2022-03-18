@@ -48,6 +48,7 @@ export class CanvasService extends AbstractService {
             this.renderEngine = this.detectRenderEngine(size);
 
             this.gameStage = new Container();
+            this.gameStage.name = "game-stage";
             this.canvasTarget.insertBefore(this.renderEngine.view, this.canvasTarget.firstChild);
 
             size = this.getBestCanvasSizeForWindow(win);

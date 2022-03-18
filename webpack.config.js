@@ -1,10 +1,26 @@
 const path = require('path');
+var webpack = require("webpack");
 const CopyPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const isDev = process.env.NODE_ENV !== 'production';
+const isDebug = process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "staging";
+const gameName = process.env.npm_package_name;
+const version = process.env.npm_package_version;
+
+const ifDefConfig = {
+    __DEBUG__: isDebug,
+    __NODE_ENV__: JSON.stringify(process.env.NODE_ENV),
+    __VERSION__: JSON.stringify(version),
+    "ifdef-verbose": true,
+    "ifdef-triple-slash": true
+};
+
+const tsLoaders = [{ loader: "ts-loader" }];
+if (!isDebug) {
+    tsLoaders.push({ loader: "ifdef-loader", options: ifDefConfig });
+}
 
 const config = {
-    mode: isDev ? 'development' : 'production',
+    mode: isDebug ? 'development' : 'production',
     entry: './src/app.ts',
     output: {
         path: path.resolve(__dirname, 'dist/'),
@@ -17,12 +33,18 @@ const config = {
         rules: [
             {
                 test: /\.tsx?$/,
-                loader: 'ts-loader',
+                use: tsLoaders,
                 exclude: /node_modules/,
             },
         ]
     },
     plugins: [
+        new webpack.DefinePlugin({
+            __NODE_ENV__: JSON.stringify(process.env.NODE_ENV),
+            __GAMENAME__: JSON.stringify(gameName),
+            __VERSION__: JSON.stringify(version),
+            __DEBUG__: JSON.stringify(isDebug),
+        }),
         new CleanWebpackPlugin(),
         new CopyPlugin( [
             { from: 'src/index.html' },
@@ -39,8 +61,8 @@ const config = {
         hot: true
     },
     optimization: {
-        minimize: !isDev
-      }
+        minimize: !isDebug
+    }
 };
 
 module.exports = config;

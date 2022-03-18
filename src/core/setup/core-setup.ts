@@ -27,6 +27,14 @@ export class CoreSetup extends AbstractCoreSetup {
         Services.register(new StateMachineService());
     }
 
+    public registerLayers(): void {
+        // ..
+    }
+
+    public registerComponents(): void {
+        Components.register(new PreloaderComponent());
+    }
+
     public registerAssets(): void {
         Services.get(PreloaderSerice).addLoadingStages(
             {
@@ -38,7 +46,7 @@ export class CoreSetup extends AbstractCoreSetup {
         );
     }
 
-    public registerSounds(): void {
+    public registerAudio(): void {
         // ..
     }
 
@@ -46,11 +54,8 @@ export class CoreSetup extends AbstractCoreSetup {
         // ..
     }
 
-    public registerLayers(): void {
-        // ..
-    }
-
-    public registerComponents(): void {
-        Components.register(new PreloaderComponent());
+    public registerDebug(): void {
+        (window as any).Services = Services;
+        (window as any).Components = Components;
     }
 }

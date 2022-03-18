@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "description": "Pixi.js project boiler plate using TypeScript, Webpack and Mocha",
   "scripts": {
-    "start": "webpack-dev-server --hot",
+    "start": "cross-env NODE_ENV=development webpack-dev-server --hot",
     "build": "cross-env NODE_ENV=production webpack",
     "lint-fix": "tslint src/**/*.ts --project tsconfig.json --fix",
     "test": "mocha tests"
@@ -29,6 +29,7 @@
   "dependencies": {
     "@types/signals": "^1.0.1",
     "enhance-log": "^1.0.6",
+    "ifdef-loader": "^2.3.2",
     "pixi.js": "^5.2.1",
     "signals": "^1.0.0"
   }

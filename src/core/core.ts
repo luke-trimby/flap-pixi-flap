@@ -6,6 +6,8 @@ import { Services } from "./services/services";
 import { StateMachineService } from "./services/state-machine/state-machine-service";
 import { CoreSetup } from "./setup/core-setup";
 
+declare const _NODE_ENV_;
+
 export class Core {
 
     protected setupClasses: CoreSetup[];
@@ -13,13 +15,15 @@ export class Core {
     public init(...setupClasses: CoreSetup[]): void {
 
         this.setupClasses = setupClasses;
-
         this.initServices();
         this.initLayers();
         this.initComponents();
         this.initAssets();
         this.initAudio();
         this.initStates();
+        /// #if _NODE_ENV_ =="development"
+        this.initDebug();
+        /// #endif
 
         Services.get(CanvasService)?.registerForUpdates(() => this.update());
         Services.get(PreloaderSerice)?.onAllStagesLoaded.addOnce(() => Services.get(StateMachineService).start());
@@ -36,6 +40,12 @@ export class Core {
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerLayers());
     }
 
+    protected initComponents(): void {
+        Log.w(`[Core] initialising Components`);
+        this.setupClasses.forEach((setup: CoreSetup) => setup.registerComponents());
+        Components.init();
+    }
+
     protected initAssets(): void {
         Log.w(`[Core] initialising Assets`);
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerAssets());
@@ -44,19 +54,20 @@ export class Core {
 
     protected initAudio(): void {
         Log.w(`[Core] initialising Audio`);
-        this.setupClasses.forEach((setup: CoreSetup) => setup.registerSounds());
-    }
-
-    protected initComponents(): void {
-        Log.w(`[Core] initialising Components`);
-        this.setupClasses.forEach((setup: CoreSetup) => setup.registerComponents());
-        Components.init();
+        this.setupClasses.forEach((setup: CoreSetup) => setup.registerAudio());
     }
 
     protected initStates(): void {
         Log.w(`[Core] initialising States`);
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerStates());
     }
+
+    /// #if _NODE_ENV_ =="development"
+    protected initDebug(): void {
+        Log.w(`[Core] initialising Debug`);
+        this.setupClasses.forEach((setup: CoreSetup) => setup.registerDebug());
+    }
+    /// #endif
 
     protected update(): void {
         // ..
