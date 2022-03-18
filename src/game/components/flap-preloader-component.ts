@@ -35,9 +35,14 @@ export class FlapPreloaderComponent extends AbstractComponent {
         gitHubLogo.scale.set(0.4, 0.4);
         this.layer.addChild(gitHubLogo);
 
-        const githubText = new Text("luke-trimby", { fill: 0xdddddd, "fontSize": 16 });
-        githubText.position.set(100, 850);
-        githubText.anchor.set(0.5, 0.5);
+        const githubText = new Text("luke-trimby", { fill: 0xdddddd, "fontSize": 15 });
+        githubText.position.set(60, 850);
+        githubText.anchor.set(0, 0.5);
         this.layer.addChild(githubText);
+
+        const emailText = new Text("luketrimby@outlook.com", { fill: 0xdddddd, "fontSize": 15 });
+        emailText.position.set(500, 850);
+        emailText.anchor.set(1, 0.5);
+        this.layer.addChild(emailText);
     }
 }
