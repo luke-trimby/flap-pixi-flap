@@ -4,6 +4,7 @@ import { PreloaderSerice } from "../../core/services/preloader/preloader-service
 import { Services } from "../../core/services/services";
 import { StateMachineService } from "../../core/services/state-machine/state-machine-service";
 import { CoreSetup } from "../../core/setup/core-setup";
+import { FlapBackgroundComponent } from "../components/flap-background-component";
 import { FlapPreloaderComponent } from "../components/flap-preloader-component";
 import { InitState } from "../states/init-state";
 
@@ -12,6 +13,7 @@ export class FlapSetup extends CoreSetup {
     public registerComponents(): void {
         super.registerComponents();
         Components.register(new FlapPreloaderComponent());
+        Components.register(new FlapBackgroundComponent());
     }
 
     public registerAssets(): void {
@@ -33,10 +35,14 @@ export class FlapSetup extends CoreSetup {
 
     public registerLayers(): void {
         Services.get(LayerService).registerLayers(
-            { name: "layer-one" },
-            { name: "layer-two" },
-            { name: "layer-three" },
-            { name: "layer-four" },
+            { name: "bg-0" },
+            { name: "bg-1" },
+            { name: "bg-2" },
+            { name: "bg-3" },
+            { name: "bg-4" },
+            { name: "bg-5" },
+            { name: "bg-6" },
+            { name: "bg-7" },
             { name: "preloader-layer" }
         );
     }

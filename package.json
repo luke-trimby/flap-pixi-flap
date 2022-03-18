@@ -1,7 +1,7 @@
 {
   "name": "flap-pixi-flap",
   "version": "0.2.0",
-  "description": "Pixi.js project boiler plate using TypeScript, Webpack and Mocha",
+  "description": "Pixi.js Flappy Birds clone code test",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot",
     "build": "cross-env NODE_ENV=production webpack",
@@ -27,8 +27,10 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
+    "@tweenjs/tween.js": "^17.6.0",
     "@types/signals": "^1.0.1",
     "enhance-log": "^1.0.6",
+    "gsap": "^3.9.1",
     "ifdef-loader": "^2.3.2",
     "pixi.js": "^5.2.1",
     "signals": "^1.0.0"

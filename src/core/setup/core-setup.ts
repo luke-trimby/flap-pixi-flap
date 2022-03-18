@@ -28,7 +28,9 @@ export class CoreSetup extends AbstractCoreSetup {
     }
 
     public registerLayers(): void {
-        // ..
+        Services.get(LayerService).registerLayers(
+            { name: "preloader-layer" }
+        );
     }
 
     public registerComponents(): void {
