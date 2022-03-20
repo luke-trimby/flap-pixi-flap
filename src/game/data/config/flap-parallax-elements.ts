@@ -158,13 +158,13 @@ export const parallaxElements: IParallaxElementConfig[][] = [
     [
         {
             assetName: "00_roof_leaves.png", assetAtlas: "WorldAssets",
-            position: new Point(0, 0),  speed: 0.6, scale: new Size(1, 1.2),
+            position: new Point(0, -1),  speed: 0.6, scale: new Size(1, 1.2),
             repositionAtX: -1098, repositionX: 1098,
             positionVariationMin: new Point(0, 0), positionVariationMax: new Point(0, 0)
         },
         {
             assetName: "00_roof_leaves.png", assetAtlas: "WorldAssets",
-            position: new Point(1098, 0),  speed: 0.6, scale: new Size(1, 1.2),
+            position: new Point(1098, -1),  speed: 0.6, scale: new Size(1, 1.2),
             repositionAtX: -1098, repositionX: 1098,
             positionVariationMin: new Point(0, 0), positionVariationMax: new Point(0, 0)
         },

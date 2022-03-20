@@ -27,6 +27,9 @@ export class StateMachineService extends AbstractService {
                     this.enterState(state);
                 }
             });
+            if (!this.currentState) {
+                Log.throw(`No init state found!`);
+            }
             this.started = true;
         }
     }
@@ -44,6 +47,7 @@ export class StateMachineService extends AbstractService {
                         this.resolveDecision(this.decisions.get(transition.to));
                     } else if (this.states.has(transition.to)) {
                         this.currentState = this.states.get(transition.to);
+                        Log.i(`[StateMachineService] '${transition.from}' -> '${transition.to}'`);
                         this.currentState.onEnter();
                     }
                 } else {

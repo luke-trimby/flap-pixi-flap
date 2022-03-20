@@ -37,8 +37,8 @@ export class PreloaderComponent extends AbstractComponent {
         );
     }
 
-    public hidePreloader(): Promise<any> {
-        return FadeFromTo(this.layer, 1, 0, 1).then(() => this.layer.removeChildren());
+    public hidePreloader(duration: number = 1): Promise<any> {
+        return FadeFromTo(this.layer, 1, 0, duration).then(() => this.layer.removeChildren());
     }
 
     protected onLoadingProgress(progress: number, loaded: number, total: number): void {

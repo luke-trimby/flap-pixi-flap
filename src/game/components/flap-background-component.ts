@@ -1,4 +1,5 @@
 import { Log } from "enhance-log";
+import gsap from "gsap/all";
 import { Container } from "pixi.js";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
 import { AssetService } from "../../core/services/asset/asset-service";
@@ -11,15 +12,23 @@ import { IParallaxElementConfig } from "../data/interface/flap-parallax-element-
 
 export class FlapBackgroundComponent extends AbstractComponent {
 
-    protected backgroundLayers: Container[];
     protected speed: number;
     protected moving: boolean;
 
     public init(): void {
         Log.d(`[FlapBackgroundComponent] Initialising`);
-        this.speed = 1;
+        this.speed = 0.1;
         this.moving = true;
-        this.backgroundLayers = [];
+    }
+
+    public setMoving(isMoving: boolean = true): void {
+        this.moving = isMoving;
+    }
+
+    public setSpeed(speed: number, duration: number): Promise<any> {
+        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+            gsap.to(this, { speed, duration, onComplete: () => resolve() });
+        });
     }
 
     public create(): Promise<any> {
@@ -49,8 +58,8 @@ export class FlapBackgroundComponent extends AbstractComponent {
                 configs.forEach((config: IParallaxElementConfig) => {
                     const nextX: number = config.sprite.x -= this.speed * config.speed;
                     if (nextX <= config.repositionAtX) {
-                        config.sprite.x = config.repositionX + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
-                        config.sprite.y = config.position.y + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
+                        config.sprite.x = config.repositionX - this.speed + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
+                        config.sprite.y = config.position.y - this.speed + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
                     } else {
                         config.sprite.x -= this.speed * config.speed;
                     }

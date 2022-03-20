@@ -51,7 +51,7 @@ export class PreloaderSerice extends AbstractService {
     protected loadNextStage(): void {
         this.currentLoadingStage = this.loadingStages.shift();
         this.loadingStageBindings = [];
-        Log.d(`[PreloaderService] Loading next stage`, this.currentLoadingStage);
+        Log.i(`[PreloaderService] Loading next stage`, this.currentLoadingStage);
 
         if (this.currentLoadingStage.onProgress) {
             const onProgressBinding = this.pixiLoader.onProgress.add((loader: Loader) => this.currentLoadingStage.onProgress(loader));

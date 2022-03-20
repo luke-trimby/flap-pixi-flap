@@ -7,7 +7,6 @@ body, html {
     background-color: #1a1a1a;
     background-size: 20px 20px;
     font-family: Helvetica;
-
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -22,6 +21,7 @@ body, html {
     position: absolute;
     top: 0;
     left: 0;
+    pointer-events: none;
 }
 .html-layer {
     position: absolute;

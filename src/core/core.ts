@@ -25,7 +25,6 @@ export class Core {
         this.initDebug();
         /// #endif
 
-        Services.get(CanvasService)?.registerForUpdates(() => this.update());
         Services.get(PreloaderSerice)?.onAllStagesLoaded.addOnce(() => Services.get(StateMachineService).start());
     }
 
@@ -68,8 +67,4 @@ export class Core {
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerDebug());
     }
     /// #endif
-
-    protected update(): void {
-        // ..
-    }
 }
