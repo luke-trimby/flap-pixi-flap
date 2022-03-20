@@ -38,6 +38,6 @@ export class FlapMenuComponent extends AbstractComponent {
     protected addPlayButtonListener(): void {
         this.playButton.buttonMode = true;
         this.playButton.interactive = true;
-        this.playButton.once("mouseup", () => this.onPlayButtonPressed.dispatch());
+        this.playButton.once("pointerdown", () => this.onPlayButtonPressed.dispatch());
     }
 }

@@ -64,14 +64,14 @@ export class FlapBackgroundComponent extends AbstractComponent {
             parallaxElements.forEach((configs: IParallaxElementConfig[]) => {
                 configs.forEach((config: IParallaxElementConfig) => {
                     if (config.sprite instanceof TilingSprite) {
-                        config.sprite.tilePosition.x -= this.speed * config.speed;
+                        config.sprite.tilePosition.x -= this.speed * config.speed * devicePixelRatio;
                     } else {
                         const nextX: number = config.sprite.x -= this.speed * config.speed;
                         if (nextX <= config.repositionAtX) {
-                            config.sprite.x = config.repositionX - this.speed + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
-                            config.sprite.y = config.position.y - this.speed + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
+                            config.sprite.x = config.repositionX - this.speed * devicePixelRatio + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
+                            config.sprite.y = config.position.y - this.speed * devicePixelRatio + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
                         } else {
-                            config.sprite.x -= this.speed * config.speed;
+                            config.sprite.x -= this.speed * config.speed * devicePixelRatio;
                         }
                     }
                 });

@@ -6,6 +6,7 @@ import { StateMachineService } from "../../core/services/state-machine/state-mac
 import { CoreSetup } from "../../core/setup/core-setup";
 import { FlapBackgroundComponent } from "../components/flap-background-component";
 import { FlapMenuComponent } from "../components/flap-menu-component";
+import { FlapPixiComponent } from "../components/flap-pixi-component";
 import { FlapPreloaderComponent } from "../components/flap-preloader-component";
 import { GameIntroState } from "../states/game-intro-state";
 import { GameState } from "../states/game-state";
@@ -36,6 +37,7 @@ export class FlapSetup extends CoreSetup {
         Components.register(new FlapPreloaderComponent());
         Components.register(new FlapBackgroundComponent());
         Components.register(new FlapMenuComponent());
+        Components.register(new FlapPixiComponent());
     }
 
     public registerAssets(): void {
