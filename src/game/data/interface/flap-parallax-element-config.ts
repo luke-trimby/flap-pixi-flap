@@ -1,15 +1,17 @@
-import { Point, Sprite } from "pixi.js";
+import { Point, Sprite, TilingSprite } from "pixi.js";
 import { Size } from "../../../core/data/size";
 
 export interface IParallaxElementConfig {
     assetName: string;
     assetAtlas: string;
     speed: number;
-    scale: Size;
+    scale: Point;
     position: Point;
-    positionVariationMin: Point;
-    positionVariationMax: Point;
-    sprite?: Sprite;
-    repositionAtX: number;
-    repositionX: number;
+    tiled: boolean;
+    size?: Size;
+    positionVariationMin?: Point;
+    positionVariationMax?: Point;
+    sprite?: Sprite | TilingSprite;
+    repositionAtX?: number;
+    repositionX?: number;
 }

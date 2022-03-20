@@ -1,6 +1,6 @@
 import { Log } from "enhance-log";
 import gsap from "gsap/all";
-import { Container } from "pixi.js";
+import { Container, TilingSprite } from "pixi.js";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
 import { AssetService } from "../../core/services/asset/asset-service";
 import { CanvasService } from "../../core/services/canvas/canvas-service";
@@ -38,11 +38,18 @@ export class FlapBackgroundComponent extends AbstractComponent {
             parallaxElements.forEach((configs: IParallaxElementConfig[], index: number) => {
                 const layer: Container = layerService.getLayer(`bg-${index}`);
                 configs.forEach((config: IParallaxElementConfig) => {
-                    config.sprite = assetService.createSprite(config.assetName, config.assetAtlas);
+                    if (config.tiled) {
+                        config.sprite = new TilingSprite(assetService.getTextureFromAtlas(config.assetName, config.assetAtlas), config.size.width, config.size.height);
+                        config.sprite.x = config.position.x;
+                        config.sprite.y = config.position.y;
+                        config.sprite.scale.set(config.scale.x, config.scale.y);
+                    } else {
+                        config.sprite = assetService.createSprite(config.assetName, config.assetAtlas);
+                        config.sprite.x = config.position.x + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
+                        config.sprite.y = config.position.y + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
+                        config.sprite.scale.set(config.scale.x, config.scale.y);
+                    }
                     config.sprite.name = config.assetName;
-                    config.sprite.x = config.position.x + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
-                    config.sprite.y = config.position.y + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
-                    config.sprite.scale.set(config.scale.width, config.scale.height);
                     layer.addChild(config.sprite);
                 });
             });
@@ -56,12 +63,16 @@ export class FlapBackgroundComponent extends AbstractComponent {
         if (this.moving) {
             parallaxElements.forEach((configs: IParallaxElementConfig[]) => {
                 configs.forEach((config: IParallaxElementConfig) => {
-                    const nextX: number = config.sprite.x -= this.speed * config.speed;
-                    if (nextX <= config.repositionAtX) {
-                        config.sprite.x = config.repositionX - this.speed + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
-                        config.sprite.y = config.position.y - this.speed + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
+                    if (config.sprite instanceof TilingSprite) {
+                        config.sprite.tilePosition.x -= this.speed * config.speed;
                     } else {
-                        config.sprite.x -= this.speed * config.speed;
+                        const nextX: number = config.sprite.x -= this.speed * config.speed;
+                        if (nextX <= config.repositionAtX) {
+                            config.sprite.x = config.repositionX - this.speed + randomRangeInt(config.positionVariationMin.x, config.positionVariationMax.x);
+                            config.sprite.y = config.position.y - this.speed + randomRangeInt(config.positionVariationMin.y, config.positionVariationMax.y);
+                        } else {
+                            config.sprite.x -= this.speed * config.speed;
+                        }
                     }
                 });
             });
