@@ -4,9 +4,10 @@ import { Loader, LoaderResource } from "pixi.js";
 import { Signal } from "signals";
 import { AbstractService } from "../../data/abstract/abstract-service";
 import { IAssetConfig } from "../../data/interface/asset-config";
-import { ILoadingStage } from "../../data/interface/loading-phase";
+import { ILoadingStage } from "../../data/interface/loading-stage";
 import { AssetService } from "../asset/asset-service";
 import { Services } from "../services";
+import FontFaceObserver = require('fontfaceobserver');
 
 export class PreloaderSerice extends AbstractService {
 
@@ -20,6 +21,8 @@ export class PreloaderSerice extends AbstractService {
     protected loadingStagesTotal: number;
     protected loadingStagesLoaded: number;
     protected currentLoadingStage: ILoadingStage;
+    protected waitingForFonts: boolean;
+    protected waitingForPixi: boolean;
 
     public init(): void {
         Log.d(`[PreloaderService] Initialising`);
@@ -30,6 +33,8 @@ export class PreloaderSerice extends AbstractService {
         this.loadingStagesLoaded = 0;
         this.loadingStages = [];
         this.pixiLoader = new Loader();
+        this.waitingForFonts = false;
+        this.waitingForPixi = false;
 
         this.pixiLoader.onProgress.add((loader: Loader) => this.onProgress(loader));
         this.pixiLoader.onLoad.add((loader: Loader, resource: LoaderResource) => this.onLoad(loader, resource));
@@ -40,6 +45,7 @@ export class PreloaderSerice extends AbstractService {
     public load(): void {
         this.onLoadingStarted.dispatch();
         this.loadNextStage();
+        this.waitingForPixi = true;
     }
 
     public addLoadingStages(...stages: ILoadingStage[]): void {
@@ -52,6 +58,16 @@ export class PreloaderSerice extends AbstractService {
         this.currentLoadingStage = this.loadingStages.shift();
         this.loadingStageBindings = [];
         Log.i(`[PreloaderService] Loading next stage`, this.currentLoadingStage);
+
+        this.currentLoadingStage.fonts?.forEach((fontName: string) => {
+            this.waitingForFonts = true;
+            new FontFaceObserver(fontName).load().then(() => {
+                this.waitingForFonts = false;
+                if (!this.waitingForPixi) {
+                    this.onAllStagesLoaded.dispatch();
+                }
+            });
+        });
 
         if (this.currentLoadingStage.onProgress) {
             const onProgressBinding = this.pixiLoader.onProgress.add((loader: Loader) => this.currentLoadingStage.onProgress(loader));
@@ -101,7 +117,10 @@ export class PreloaderSerice extends AbstractService {
             this.loadNextStage();
         } else {
             Log.i(`[PreloaderService] All loading stages complete`);
-            this.onAllStagesLoaded.dispatch();
+            this.waitingForPixi = false;
+            if (!this.waitingForFonts) {
+                this.onAllStagesLoaded.dispatch();
+            }
         }
     }
 }

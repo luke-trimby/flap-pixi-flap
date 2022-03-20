@@ -30,6 +30,7 @@
     "@tweenjs/tween.js": "^17.6.0",
     "@types/signals": "^1.0.1",
     "enhance-log": "^1.0.6",
+    "fontfaceobserver": "^2.1.0",
     "gsap": "^3.9.1",
     "ifdef-loader": "^2.3.2",
     "pixi.js": "^5.2.1",

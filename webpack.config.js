@@ -51,6 +51,7 @@ const config = {
             { from: 'assets/css/style.css', to: 'assets/css/style.css' },
             { from: 'assets/images', to: 'assets/images' },
             { from: 'assets/atlas', to: 'assets/atlas' },
+            { from: 'assets/fonts', to: 'assets/fonts' }
         ]),
     ],
     devServer: {

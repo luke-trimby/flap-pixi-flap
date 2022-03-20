@@ -1,12 +1,9 @@
 import { Log } from "enhance-log";
 import { Components } from "./components/components";
-import { CanvasService } from "./services/canvas/canvas-service";
 import { PreloaderSerice } from "./services/preloader/preloader-service";
 import { Services } from "./services/services";
 import { StateMachineService } from "./services/state-machine/state-machine-service";
 import { CoreSetup } from "./setup/core-setup";
-
-declare const _NODE_ENV_;
 
 export class Core {
 
@@ -21,7 +18,7 @@ export class Core {
         this.initAssets();
         this.initAudio();
         this.initStates();
-        /// #if _NODE_ENV_ =="development"
+        /// #if __NODE_ENV__ =="development"
         this.initDebug();
         /// #endif
 
@@ -61,7 +58,7 @@ export class Core {
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerStates());
     }
 
-    /// #if _NODE_ENV_ =="development"
+    /// #if __NODE_ENV__ =="development"
     protected initDebug(): void {
         Log.w(`[Core] initialising Debug`);
         this.setupClasses.forEach((setup: CoreSetup) => setup.registerDebug());

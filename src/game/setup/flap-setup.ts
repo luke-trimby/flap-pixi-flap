@@ -24,6 +24,8 @@ export class FlapSetup extends CoreSetup {
             { name: "bg-5" },
             { name: "bg-6" },
             { name: "bg-7" },
+            { name: "pixi" },
+            { name: "game-intro" },
             { name: "menu" },
             { name: "preloader-layer" }
         );
@@ -48,6 +50,9 @@ export class FlapSetup extends CoreSetup {
                     { name: "flyingPixie",  path: "./assets/images/flyingPixie.png" },
                     { name: "column",  path: "./assets/images/column.png" },
                     { name: "github",  path: "./assets/images/github.png" }
+                ],
+                fonts: [
+                    "FredokaOne"
                 ]
             }
         );
