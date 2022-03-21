@@ -23,9 +23,8 @@ export class FlapSetup extends CoreSetup {
             { name: "bg-3" },
             { name: "bg-4" },
             { name: "bg-5" },
-            { name: "bg-6" },
-            { name: "bg-7" },
             { name: "pixi" },
+            { name: "bg-6" },
             { name: "game-intro" },
             { name: "menu" },
             { name: "preloader-layer" }
