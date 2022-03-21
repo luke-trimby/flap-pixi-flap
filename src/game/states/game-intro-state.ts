@@ -49,6 +49,7 @@ export class GameIntroState extends State {
                 this.backgroundComponent.setMoving();
                 this.backgroundComponent.setSpeed(1, 1);
                 this.pixiComponent.playIntro();
+                this.scoreComponent.resetScore();
                 this.columnComponent.setSpeed(ColumnSpeed.NORMAL, 1);
                 this.menuComponent.setInteractionEnabled(false);
             }),

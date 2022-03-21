@@ -5,6 +5,7 @@ export interface IColumnElementConfig {
     btm: Sprite;
     topHit: Sprite,
     btmHit: Sprite;
+    scoreAwarded: boolean;
     container: Container;
     repositionAtX: number;
     repositionX: number;

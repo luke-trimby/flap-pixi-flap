@@ -12,6 +12,7 @@ import { randomRangeInt } from "../../core/utils/number-utils";
 import { ColumnSpeed } from "../data/flap-column-speed";
 import { IColumnElementConfig } from "../data/interface/flap-column-element-config";
 import { FlapPixiComponent } from "./flap-pixi-component";
+import { FlapScoreComponent } from "./flap-score-component";
 
 export class FlapColumnComponent extends AbstractComponent {
 
@@ -21,11 +22,13 @@ export class FlapColumnComponent extends AbstractComponent {
     protected hitTestingEnabled:  boolean;
     protected speed: ColumnSpeed;
     protected columns: IColumnElementConfig[];
+    protected scoreComponent: FlapScoreComponent;
     protected pixiComponent: FlapPixiComponent;
 
     public init(): void {
         this.onPixiDeath = new Signal();
         this.layer = Services.get(LayerService).getLayer("columns");
+        this.scoreComponent = Components.get(FlapScoreComponent);
         this.pixiComponent = Components.get(FlapPixiComponent);
         this.hitTestingEnabled = false;
         this.moving = false;
@@ -74,7 +77,8 @@ export class FlapColumnComponent extends AbstractComponent {
                 positionVariationMin: new Point(0, -200),
                 positionVariationMax: new Point(0, 300),
                 spacingVariationMin: 250,
-                spacingVariationMax: 400
+                spacingVariationMax: 400,
+                scoreAwarded: false
             });
         }
     }
@@ -123,6 +127,7 @@ export class FlapColumnComponent extends AbstractComponent {
                     column.container.position.x = repositionX;
                     column.container.position.y = repositionY;
                     column.container.visible = true;
+                    column.scoreAwarded = false;
                 }
                 if (this.hitTestingEnabled) {
                     if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
@@ -130,6 +135,12 @@ export class FlapColumnComponent extends AbstractComponent {
                     }
                     else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
                         this.handleDeath();
+                    }
+                }
+                if (!column.scoreAwarded && column.container.visible) {
+                    if (this.pixiComponent.getPixiSprite().position.x >= column.container.position.x + column.container.width) {
+                        column.scoreAwarded = true;
+                        this.scoreComponent.incrementScore();
                     }
                 }
             });

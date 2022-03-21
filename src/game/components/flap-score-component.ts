@@ -17,6 +17,8 @@ export class FlapScoreComponent extends AbstractComponent {
 
     public init(): void {
         this.layer = Services.get(LayerService).getLayer("score");
+        this.currentScore = 0;
+        this.highScore = 0;
     }
 
     public create(): void {
@@ -45,10 +47,21 @@ export class FlapScoreComponent extends AbstractComponent {
         return FadeFromTo(this.layer, Number(!show), Number(show), duration);
     }
 
-    public setScore(score: number): void {
+    public resetScore(): void {
+        this.currentScore = 0;
+        this.setScore(this.currentScore);
+    }
+
+    public incrementScore(): void {
+        this.setScore(this.currentScore + 1);
+    }
+
+    protected setScore(score: number): void {
         this.currentScore = score;
+        this.currentScoreValue.text = `${this.currentScore}`;
         if (this.highScore < this.currentScore) {
             this.highScore = this.currentScore;
+            this.highScoreValue.text = `${this.highScore}`;
         }
     }
 }
