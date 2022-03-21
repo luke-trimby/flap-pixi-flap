@@ -117,7 +117,7 @@ export class FlapColumnComponent extends AbstractComponent {
     protected onUpdate(): void {
         if (this.moving) {
             this.columns.forEach((column: IColumnElementConfig) => {
-                column.container.x -= this.speed;
+                column.container.x -= this.speed * devicePixelRatio;
                 if (column.container.position.x <= column.repositionAtX) {
                     const repositionX: number = column.repositionX + randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
                     const repositionY: number = column.repositionY + randomRangeInt(column.positionVariationMin.y, column.positionVariationMax.y);
