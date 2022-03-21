@@ -8,7 +8,7 @@ import { PromiseChain, PromiseDelay, PromiseWrap } from "../../core/utils/promis
 import { FlapBackgroundComponent } from "../components/flap-background-component";
 import { FlapColumnComponent } from "../components/flap-column-component";
 import { FlapMenuComponent } from "../components/flap-menu-component";
-import { ColumSpeed } from "../data/flap-column-speed";
+import { ColumnSpeed } from "../data/flap-column-speed";
 
 export class MenuState extends State {
 
@@ -33,8 +33,8 @@ export class MenuState extends State {
             () => PromiseWrap(() => {
                 this.backgroundComponent.setSpeed(0.1);
                 this.backgroundComponent.setMoving();
-                this.flapColumnComponent.setSpeed(ColumSpeed.SLOW);
-                this.flapColumnComponent.setMoving();
+                this.flapColumnComponent.setSpeed(ColumnSpeed.SLOW);
+                this.flapColumnComponent.setMoving(false);
                 this.menuComponent.setInteractionEnabled(true);
                 this.menuComponent.onPlayButtonPressed.addOnce(() => this.onPlayButtonPressed());
             })

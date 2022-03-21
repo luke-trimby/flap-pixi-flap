@@ -1,5 +1,5 @@
 
-export enum ColumSpeed {
-    SLOW = 0.1,
-    NORMAL = 0.6
+export enum ColumnSpeed {
+    SLOW = 0.15,
+    NORMAL = 0.7
 };

@@ -11,26 +11,26 @@ import { FlapMenuComponent } from "../components/flap-menu-component";
 import { FlapPixiComponent } from "../components/flap-pixi-component";
 import { FlapScoreComponent } from "../components/flap-score-component";
 import { flapCountdownTextStyle } from "../data/config/flap-text-styles";
-import { ColumSpeed } from "../data/flap-column-speed";
+import { ColumnSpeed } from "../data/flap-column-speed";
 
 export class GameIntroState extends State {
 
     protected layer: Container;
     protected layerService: LayerService;
-    protected flapPixiComponent: FlapPixiComponent;
-    protected flapColumnComponent: FlapColumnComponent;
-    protected flapBackgroundComponent: FlapBackgroundComponent;
-    protected flapScoreComponent: FlapScoreComponent;
+    protected pixiComponent: FlapPixiComponent;
+    protected columnComponent: FlapColumnComponent;
+    protected backgroundComponent: FlapBackgroundComponent;
+    protected scoreComponent: FlapScoreComponent;
     protected menuComponent: FlapMenuComponent;
     protected countDownText: Text;
 
     constructor(name: string, init: boolean = false) {
         super(name, init);
         this.layer = Services.get(LayerService).getLayer("game-intro");
-        this.flapPixiComponent = Components.get(FlapPixiComponent);
-        this.flapColumnComponent = Components.get(FlapColumnComponent);
-        this.flapBackgroundComponent = Components.get(FlapBackgroundComponent);
-        this.flapScoreComponent = Components.get(FlapScoreComponent);
+        this.pixiComponent = Components.get(FlapPixiComponent);
+        this.columnComponent = Components.get(FlapColumnComponent);
+        this.backgroundComponent = Components.get(FlapBackgroundComponent);
+        this.scoreComponent = Components.get(FlapScoreComponent);
         this.menuComponent = Components.get(FlapMenuComponent);
     }
 
@@ -42,16 +42,17 @@ export class GameIntroState extends State {
 
         const chain: Array<() => Promise<any>> = [
             () => PromiseWrap(() => {
-                this.flapPixiComponent.create();
-                this.flapPixiComponent.playIntro();
-                this.flapBackgroundComponent.setSpeed(0.1);
-                this.flapBackgroundComponent.setMoving();
-                this.flapColumnComponent.setMoving();
-                this.flapBackgroundComponent.setSpeed(1, 1);
-                this.flapColumnComponent.setSpeed(ColumSpeed.NORMAL, 1);
+                this.pixiComponent.create();
+                this.columnComponent.create();
+                this.columnComponent.setMoving();
+                this.backgroundComponent.setSpeed(0.1);
+                this.backgroundComponent.setMoving();
+                this.backgroundComponent.setSpeed(1, 1);
+                this.pixiComponent.playIntro();
+                this.columnComponent.setSpeed(ColumnSpeed.NORMAL, 1);
                 this.menuComponent.setInteractionEnabled(false);
             }),
-            () => this.flapScoreComponent.show(true, 1),
+            () => this.scoreComponent.show(true, 1),
             () => this.countDown("3"),
             () => this.countDown("2"),
             () => this.countDown("1"),

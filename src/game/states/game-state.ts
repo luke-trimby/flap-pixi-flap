@@ -1,5 +1,5 @@
-import { Log } from "enhance-log";
 import { Container } from "pixi.js";
+import { SignalBinding } from "signals";
 import { Components } from "../../core/components/components";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
@@ -15,42 +15,47 @@ export class GameState extends State {
 
     protected layer: Container;
     protected layerService: LayerService;
-    protected flapPixiComponent: FlapPixiComponent;
-    protected flapColumnComponent: FlapColumnComponent;
-    protected flapBackgroundComponent: FlapBackgroundComponent;
-    protected flapScoreComponent: FlapScoreComponent;
+    protected pixiComponent: FlapPixiComponent;
+    protected columnComponent: FlapColumnComponent;
+    protected backgroundComponent: FlapBackgroundComponent;
+    protected scoreComponent: FlapScoreComponent;
+    protected pixiBinding: SignalBinding;
 
     constructor(name: string, init: boolean = false) {
         super(name, init);
         this.layerService = Services.get(LayerService);
-        this.flapPixiComponent = Components.get(FlapPixiComponent);
-        this.flapColumnComponent = Components.get(FlapColumnComponent);
-        this.flapBackgroundComponent = Components.get(FlapBackgroundComponent);
-        this.flapScoreComponent = Components.get(FlapScoreComponent);
+        this.pixiComponent = Components.get(FlapPixiComponent);
+        this.columnComponent = Components.get(FlapColumnComponent);
+        this.backgroundComponent = Components.get(FlapBackgroundComponent);
+        this.scoreComponent = Components.get(FlapScoreComponent);
     }
 
     public onEnter(): Promise<any> {
         return new Promise<any>((resolve: (value?: any) => any) => {
             this.layer = this.layerService.getLayer("pixi");
-            this.flapPixiComponent.enableUserInteraction();
-            this.flapPixiComponent.onPixiDeath.addOnce(() => this.onPixiDeath().then(() => resolve()));
+            this.pixiComponent.enableUserInteraction();
+            this.columnComponent.enableHitTesting();
+            this.pixiBinding = this.pixiComponent.onPixiDeath.addOnce(() => this.onPixiDeath().then(() => resolve()));
         }).then(() => this.complete());
     }
 
     protected onPixiDeath(): Promise<any> {
         const flapMenuComponent: FlapMenuComponent = Components.get(FlapMenuComponent);
 
+        this.pixiBinding.detach();
+
         return PromiseChain([
             () => PromiseWrap(() => {
-                this.flapBackgroundComponent.setMoving(false);
-                this.flapColumnComponent.setMoving(false);
+                this.backgroundComponent.setMoving(false);
                 this.layerService.getLayer("menu").alpha = 1;
                 flapMenuComponent.showGameNameText(false);
                 flapMenuComponent.showLukeTrimbyText(false);
                 flapMenuComponent.showPlayButton(false);
             }),
-            () => this.flapScoreComponent.show(false, 1),
+            () => this.scoreComponent.show(false, 1),
             () => flapMenuComponent.showGameOverText(true, 0.5),
+            () => this.columnComponent.show(false, 1),
+            () => PromiseWrap(() => this.columnComponent.destroy()),
             () => PromiseDelay(2),
             () => flapMenuComponent.show(false, 0.5)
         ]);

@@ -1,4 +1,3 @@
-import { Log } from "enhance-log";
 import gsap, { Power4 } from "gsap";
 import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
 import { Signal } from "signals";
@@ -9,8 +8,7 @@ import { CanvasService } from "../../core/services/canvas/canvas-service";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { PromiseWrap } from "../../core/utils/promise-utils";
-import { FlapBackgroundComponent } from "./flap-background-component";
-import { FlapMenuComponent } from "./flap-menu-component";
+import { FlapColumnComponent } from "./flap-column-component";
 
 export class FlapPixiComponent extends AbstractComponent {
 
@@ -56,6 +54,7 @@ export class FlapPixiComponent extends AbstractComponent {
         this.floorHitArea = new Rectangle(0, 735, 540, 185);
 
         Services.get(CanvasService).registerForUpdates(this.onUpdate, this);
+        Components.get(FlapColumnComponent).onPixiDeath.addOnce(() => this.handleDeath());
     }
 
     public playIntro(): Promise<any> {
@@ -70,6 +69,10 @@ export class FlapPixiComponent extends AbstractComponent {
                 }
             });
         });
+    }
+
+    public getPixiSprite(): Sprite {
+        return this.pixi;
     }
 
     protected playDeathAnim(): Promise<any> {

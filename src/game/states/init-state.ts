@@ -28,7 +28,6 @@ export class InitState extends State {
         return PromiseWrap(() => {
             this.preloaderComponent.hidePreloader();
             this.backgroundComponent.create();
-            this.columnComponent.create();
             this.menuComponent.create();
             this.menuComponent.show(false);
             this.menuComponent.setInteractionEnabled(false);

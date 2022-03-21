@@ -1,8 +1,10 @@
-import { Container, Point, Sprite } from "pixi.js";
+import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
 
 export interface IColumnElementConfig {
     top: Sprite,
     btm: Sprite;
+    topHit: Sprite,
+    btmHit: Sprite;
     container: Container;
     repositionAtX: number;
     repositionX: number;
