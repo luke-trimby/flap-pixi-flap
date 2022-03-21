@@ -15,6 +15,6 @@ export class GameState extends State {
             const flapPixiComponent: FlapPixiComponent = Components.get(FlapPixiComponent);
             flapPixiComponent.enableUserInteraction();
             flapPixiComponent.onPixiDeath.addOnce(() => resolve());
-        }).then(() => this.complete())
+        }).then(() => this.complete());
     }
 }

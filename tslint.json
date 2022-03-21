@@ -7,6 +7,7 @@
         "no-namespace": false,
         "no-bitwise": false,
         "cyclomatic-complexity": true,
+        "array-type": [true, "array-simple"],
         "max-line-length": [
             true,
             {

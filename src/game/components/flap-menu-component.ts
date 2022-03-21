@@ -20,6 +20,8 @@ export class FlapMenuComponent extends AbstractComponent {
 
     public create(): Promise<any> {
         return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+            this.layer.visible = true;
+            this.layer.alpha = 1;
             this.playButton = Services.get(AssetService).createSprite("playButton");
             this.playButton.anchor.set(0.5);
             this.playButton.position.set(260, 450);

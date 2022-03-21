@@ -2,11 +2,14 @@ import { Log } from "enhance-log";
 import gsap, { Power3, Power4 } from "gsap";
 import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
 import { Signal } from "signals";
+import { Components } from "../../core/components/components";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
 import { AssetService } from "../../core/services/asset/asset-service";
 import { CanvasService } from "../../core/services/canvas/canvas-service";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
+import { PromiseWrap } from "../../core/utils/promise-utils";
+import { FlapBackgroundComponent } from "./flap-background-component";
 
 export class FlapPixiComponent extends AbstractComponent {
 
@@ -56,7 +59,7 @@ export class FlapPixiComponent extends AbstractComponent {
     }
 
     public playIntro(): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+        return PromiseWrap(() => {
             gsap.to(this.pixi, {
                 x: 250,
                 duration: 1.2,
@@ -66,7 +69,6 @@ export class FlapPixiComponent extends AbstractComponent {
                     this.flapButton.on("pointerdown", () => this.onFlapButtonPressed());
                 }
             });
-            resolve();
         });
     }
 
@@ -125,6 +127,9 @@ export class FlapPixiComponent extends AbstractComponent {
 
     protected handleDeath(): void {
         this.enableUserInteraction(false);
+        const flapBackgroundComponent: FlapBackgroundComponent = Components.get(FlapBackgroundComponent);
+        flapBackgroundComponent.setMoving(false);
+        flapBackgroundComponent.setSpeed(0.1);
         Services.get(CanvasService).deRegisterFromUpdates(this.onUpdate, this);
         this.playDeath().then(() => {
             this.floorHitArea = null;

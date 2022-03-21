@@ -72,5 +72,6 @@ export class FlapSetup extends CoreSetup {
             .mapTransition("init", "menu")
             .mapTransition("menu", "game-intro")
             .mapTransition("game-intro", "game")
+            .mapTransition("game", "menu")
     }
 }

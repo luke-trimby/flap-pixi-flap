@@ -1,4 +1,3 @@
-import { Log } from "enhance-log";
 import gsap from "gsap";
 import { Container, Text } from "pixi.js";
 import { Components } from "../../core/components/components";
@@ -24,11 +23,12 @@ export class GameIntroState extends State {
         this.layer.addChild(this.countDownText);
 
         const chain: Array<() => Promise<any>> = [
-            () => new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+            () => PromiseWrap(() => {
                 Components.get(FlapPixiComponent).create();
                 Components.get(FlapPixiComponent).playIntro();
+                Components.get(FlapBackgroundComponent).setSpeed(0.1);
+                Components.get(FlapBackgroundComponent).setMoving();
                 Components.get(FlapBackgroundComponent).setSpeed(1, 1);
-                resolve();
             }),
             () => this.countDown("3"),
             () => this.countDown("2"),
@@ -40,16 +40,7 @@ export class GameIntroState extends State {
     }
 
     public onExit(): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
-            this.layer.removeChildren();
-            resolve();
-        });
-    }
-
-    protected countdown(text: string): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
-            Log.i(`Lukas - `, text);
-        });
+        return PromiseWrap(() => this.layer.removeChildren());
     }
 
     protected countDown(text: string): Promise<any> {

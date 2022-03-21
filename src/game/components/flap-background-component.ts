@@ -7,6 +7,7 @@ import { CanvasService } from "../../core/services/canvas/canvas-service";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { randomRangeInt } from "../../core/utils/number-utils";
+import { PromiseWrap } from "../../core/utils/promise-utils";
 import { parallaxElements } from "../data/config/flap-parallax-elements";
 import { IParallaxElementConfig } from "../data/interface/flap-parallax-element-config";
 
@@ -25,14 +26,14 @@ export class FlapBackgroundComponent extends AbstractComponent {
         this.moving = isMoving;
     }
 
-    public setSpeed(speed: number, duration: number): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+    public setSpeed(speed: number, duration: number = 0): Promise<any> {
+        return new Promise<any>((resolve: (value?: any) => any) => {
             gsap.to(this, { speed, duration, onComplete: () => resolve() });
         });
     }
 
     public create(): Promise<any> {
-        return new Promise((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+        return PromiseWrap(() => {
             const layerService: LayerService = Services.get(LayerService);
             const assetService: AssetService = Services.get(AssetService);
             parallaxElements.forEach((configs: IParallaxElementConfig[], index: number) => {
@@ -53,9 +54,7 @@ export class FlapBackgroundComponent extends AbstractComponent {
                     layer.addChild(config.sprite);
                 });
             });
-
             Services.get(CanvasService).registerForUpdates(this.onUpdate, this);
-            resolve();
         });
     }
 
