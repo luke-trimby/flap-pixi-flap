@@ -10,6 +10,7 @@ import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { PromiseWrap } from "../../core/utils/promise-utils";
 import { FlapBackgroundComponent } from "./flap-background-component";
+import { FlapMenuComponent } from "./flap-menu-component";
 
 export class FlapPixiComponent extends AbstractComponent {
 
@@ -28,7 +29,6 @@ export class FlapPixiComponent extends AbstractComponent {
     protected flapRotationTimeout: number;
 
     public init(): void {
-        Log.d(`[FlapPixiComponent] - init`);
         this.onPixiDeath = new Signal();
         this.layer = Services.get(LayerService).getLayer("pixi");
         this.userInteractionEnabled = false;
@@ -72,14 +72,15 @@ export class FlapPixiComponent extends AbstractComponent {
         });
     }
 
-    protected playDeath(): Promise<any> {
+    protected playDeathAnim(): Promise<any> {
         return new Promise<any>((resolve: (value?: any) => any) => {
             gsap.timeline()
             .to(this.pixi, {
                 y: "-=100",
-                rotation: Math.PI * 2,
+                rotation: Math.pow(Math.PI, 2),
                 duration: 0.25
-            }).to(this.pixi, {
+            })
+            .to(this.pixi, {
                 y: 1000,
                 duration: 0.5,
                 ease: Power4.easeIn,
@@ -126,14 +127,10 @@ export class FlapPixiComponent extends AbstractComponent {
 
     protected handleDeath(): void {
         this.enableUserInteraction(false);
-        const flapBackgroundComponent: FlapBackgroundComponent = Components.get(FlapBackgroundComponent);
-        flapBackgroundComponent.setMoving(false);
-        flapBackgroundComponent.setSpeed(0.1);
         Services.get(CanvasService).deRegisterFromUpdates(this.onUpdate, this);
-        this.playDeath().then(() => {
-            this.floorHitArea = null;
-            this.layer.removeChildren()
-            this.onPixiDeath.dispatch();
-        });
+
+        this.floorHitArea = null;
+        this.playDeathAnim().then(() => this.layer.removeChildren());
+        this.onPixiDeath.dispatch();
     }
 }

@@ -14,9 +14,7 @@ export class FlapPreloaderComponent extends AbstractComponent {
     protected stageLoadBinding: SignalBinding;
 
     public init(): void {
-        Log.d(`[FlapPreloaderComponent] Initialising`);
         this.layer = Services.get(LayerService).getLayer("preloader-layer");
-
         this.stageLoadBinding = Services.get(PreloaderSerice).onStageLoaded.add(
             (name: string, current: number, total: number) => this.onStageLoaded(name, current, total)
         );

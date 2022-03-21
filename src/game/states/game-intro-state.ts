@@ -6,17 +6,35 @@ import { Services } from "../../core/services/services";
 import { State } from "../../core/services/state-machine/state";
 import { PromiseChain, PromiseWrap } from "../../core/utils/promise-utils";
 import { FlapBackgroundComponent } from "../components/flap-background-component";
+import { FlapColumnComponent } from "../components/flap-column-component";
+import { FlapMenuComponent } from "../components/flap-menu-component";
 import { FlapPixiComponent } from "../components/flap-pixi-component";
-import { flapCountdownTextStyle } from "../data/config/flap-countdown-text-style";
+import { FlapScoreComponent } from "../components/flap-score-component";
+import { flapCountdownTextStyle } from "../data/config/flap-text-styles";
+import { ColumSpeed } from "../data/flap-column-speed";
 
 export class GameIntroState extends State {
 
     protected layer: Container;
+    protected layerService: LayerService;
+    protected flapPixiComponent: FlapPixiComponent;
+    protected flapColumnComponent: FlapColumnComponent;
+    protected flapBackgroundComponent: FlapBackgroundComponent;
+    protected flapScoreComponent: FlapScoreComponent;
+    protected menuComponent: FlapMenuComponent;
     protected countDownText: Text;
 
-    public onEnter(): Promise<any> {
+    constructor(name: string, init: boolean = false) {
+        super(name, init);
         this.layer = Services.get(LayerService).getLayer("game-intro");
+        this.flapPixiComponent = Components.get(FlapPixiComponent);
+        this.flapColumnComponent = Components.get(FlapColumnComponent);
+        this.flapBackgroundComponent = Components.get(FlapBackgroundComponent);
+        this.flapScoreComponent = Components.get(FlapScoreComponent);
+        this.menuComponent = Components.get(FlapMenuComponent);
+    }
 
+    public onEnter(): Promise<any> {
         this.countDownText = new Text("", flapCountdownTextStyle);
         this.countDownText.anchor.set(0.5, 0.5);
         this.countDownText.position.set(270, 350);
@@ -24,12 +42,16 @@ export class GameIntroState extends State {
 
         const chain: Array<() => Promise<any>> = [
             () => PromiseWrap(() => {
-                Components.get(FlapPixiComponent).create();
-                Components.get(FlapPixiComponent).playIntro();
-                Components.get(FlapBackgroundComponent).setSpeed(0.1);
-                Components.get(FlapBackgroundComponent).setMoving();
-                Components.get(FlapBackgroundComponent).setSpeed(1, 1);
+                this.flapPixiComponent.create();
+                this.flapPixiComponent.playIntro();
+                this.flapBackgroundComponent.setSpeed(0.1);
+                this.flapBackgroundComponent.setMoving();
+                this.flapColumnComponent.setMoving();
+                this.flapBackgroundComponent.setSpeed(1, 1);
+                this.flapColumnComponent.setSpeed(ColumSpeed.NORMAL, 1);
+                this.menuComponent.setInteractionEnabled(false);
             }),
+            () => this.flapScoreComponent.show(true, 1),
             () => this.countDown("3"),
             () => this.countDown("2"),
             () => this.countDown("1"),

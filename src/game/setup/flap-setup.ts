@@ -5,9 +5,11 @@ import { Services } from "../../core/services/services";
 import { StateMachineService } from "../../core/services/state-machine/state-machine-service";
 import { CoreSetup } from "../../core/setup/core-setup";
 import { FlapBackgroundComponent } from "../components/flap-background-component";
+import { FlapColumnComponent } from "../components/flap-column-component";
 import { FlapMenuComponent } from "../components/flap-menu-component";
 import { FlapPixiComponent } from "../components/flap-pixi-component";
 import { FlapPreloaderComponent } from "../components/flap-preloader-component";
+import { FlapScoreComponent } from "../components/flap-score-component";
 import { GameIntroState } from "../states/game-intro-state";
 import { GameState } from "../states/game-state";
 import { InitState } from "../states/init-state";
@@ -23,10 +25,12 @@ export class FlapSetup extends CoreSetup {
             { name: "bg-3" },
             { name: "bg-4" },
             { name: "bg-5" },
+            { name: "columns" },
             { name: "pixi" },
             { name: "bg-6" },
             { name: "game-intro" },
             { name: "menu" },
+            { name: "score" },
             { name: "preloader-layer" }
         );
     }
@@ -37,6 +41,8 @@ export class FlapSetup extends CoreSetup {
         Components.register(new FlapBackgroundComponent());
         Components.register(new FlapMenuComponent());
         Components.register(new FlapPixiComponent());
+        Components.register(new FlapScoreComponent());
+        Components.register(new FlapColumnComponent());
     }
 
     public registerAssets(): void {

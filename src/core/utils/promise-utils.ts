@@ -1,3 +1,4 @@
+import gsap from "gsap";
 
 export function PromiseChain(promiseList: Array<() => Promise<any>>): Promise<any> {
     return promiseList.reduce((prevPromise: Promise<any>, nextPromise: () => Promise<any>) => {
@@ -14,4 +15,10 @@ export function PromiseWrap<T>(func: () => T): Promise<T> {
         func();
         resolve();
     });
+}
+
+export function PromiseDelay<T>(delay: number): Promise<T> {
+    return new Promise((resolve: (value?: any) => any) => {
+        gsap.delayedCall(delay, () => resolve());
+    })
 }

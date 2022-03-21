@@ -17,7 +17,6 @@ export class FlapBackgroundComponent extends AbstractComponent {
     protected moving: boolean;
 
     public init(): void {
-        Log.d(`[FlapBackgroundComponent] Initialising`);
         this.speed = 0.1;
         this.moving = true;
     }
@@ -32,9 +31,8 @@ export class FlapBackgroundComponent extends AbstractComponent {
         });
     }
 
-    public create(): Promise<any> {
-        return PromiseWrap(() => {
-            const layerService: LayerService = Services.get(LayerService);
+    public create(): void {
+        const layerService: LayerService = Services.get(LayerService);
             const assetService: AssetService = Services.get(AssetService);
             parallaxElements.forEach((configs: IParallaxElementConfig[], index: number) => {
                 const layer: Container = layerService.getLayer(`bg-${index}`);
@@ -55,7 +53,6 @@ export class FlapBackgroundComponent extends AbstractComponent {
                 });
             });
             Services.get(CanvasService).registerForUpdates(this.onUpdate, this);
-        });
     }
 
     protected onUpdate(): void {

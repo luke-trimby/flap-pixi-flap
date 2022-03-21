@@ -1,7 +1,7 @@
 import gsap from "gsap";
 import { DisplayObject } from "pixi.js";
 
-export function FadeFromTo(displayObject: DisplayObject, from: number, to: number, duration: number): Promise<any> {
+export function FadeFromTo(displayObject: DisplayObject, from: number, to: number, duration: number, complete?: () => any): Promise<any> {
     return new Promise((resolve: (value?: any) => void) => {
         displayObject.alpha = from;
         displayObject.visible = true;
@@ -11,6 +11,9 @@ export function FadeFromTo(displayObject: DisplayObject, from: number, to: numbe
             duration,
             onComplete: () => {
                 displayObject.visible = Boolean(displayObject.alpha);
+                if (complete) {
+                    complete();
+                }
                 resolve();
             }
         });
