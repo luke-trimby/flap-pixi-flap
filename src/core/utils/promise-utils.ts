@@ -10,7 +10,7 @@ export function PromiseChain(promiseList: Array<() => Promise<any>>): Promise<an
 }
 
 export function PromiseWrap<T>(func: () => T): Promise<T> {
-    return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+    return new Promise<any>((resolve: (value?: any) => any) => {
         func();
         resolve();
     });

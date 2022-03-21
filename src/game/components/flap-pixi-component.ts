@@ -1,5 +1,5 @@
 import { Log } from "enhance-log";
-import gsap, { Power3, Power4 } from "gsap";
+import gsap, { Circ, Power1, Power3, Power4 } from "gsap";
 import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
 import { Signal } from "signals";
 import { Components } from "../../core/components/components";
@@ -73,17 +73,16 @@ export class FlapPixiComponent extends AbstractComponent {
     }
 
     protected playDeath(): Promise<any> {
-        // TODO - finish this
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+        return new Promise<any>((resolve: (value?: any) => any) => {
             gsap.timeline()
             .to(this.pixi, {
-                y: "-=200",
-                duration: 1.2,
-                ease: Power3.easeOut
+                y: "-=100",
+                rotation: Math.PI * 2,
+                duration: 0.25
             }).to(this.pixi, {
                 y: 1000,
-                duration: 3,
-                ease: Power3.easeOut,
+                duration: 0.5,
+                ease: Power4.easeIn,
                 onComplete: () => resolve()
             });
         });

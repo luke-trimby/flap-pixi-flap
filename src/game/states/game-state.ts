@@ -10,7 +10,7 @@ export class GameState extends State {
     protected layer: Container;
 
     public onEnter(): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+        return new Promise<any>((resolve: (value?: any) => any) => {
             this.layer = Services.get(LayerService).getLayer("pixi");
             const flapPixiComponent: FlapPixiComponent = Components.get(FlapPixiComponent);
             flapPixiComponent.enableUserInteraction();

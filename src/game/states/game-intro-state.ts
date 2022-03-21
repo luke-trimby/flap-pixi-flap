@@ -44,7 +44,7 @@ export class GameIntroState extends State {
     }
 
     protected countDown(text: string): Promise<any> {
-        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+        return new Promise<any>((resolve: (value?: any) => any) => {
             this.countDownText.text = text;
 
             const alphaText: Text = new Text(text, flapCountdownTextStyle);
