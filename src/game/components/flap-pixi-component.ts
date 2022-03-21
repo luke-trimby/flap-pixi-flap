@@ -1,6 +1,7 @@
 import { Log } from "enhance-log";
-import gsap, { Power4 } from "gsap";
-import { Container, Graphics, Point, Sprite } from "pixi.js";
+import gsap, { Power3, Power4 } from "gsap";
+import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
+import { Signal } from "signals";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
 import { AssetService } from "../../core/services/asset/asset-service";
 import { CanvasService } from "../../core/services/canvas/canvas-service";
@@ -9,12 +10,15 @@ import { Services } from "../../core/services/services";
 
 export class FlapPixiComponent extends AbstractComponent {
 
+    public onPixiDeath: Signal;
     protected layer: Container;
     protected pixi: Sprite;
     protected flapButton: Graphics;
+    protected floorHitArea: Rectangle;
     protected gravity: number;
     protected userInteractionEnabled: boolean;
     protected pixiMutators: Point[];
+    protected pixiUpperLimit: number;
     protected pixiReset: NodeJS.Timeout;
     protected flapDistance: number;
     protected flapRotation: number;
@@ -22,12 +26,14 @@ export class FlapPixiComponent extends AbstractComponent {
 
     public init(): void {
         Log.d(`[FlapPixiComponent] - init`);
+        this.onPixiDeath = new Signal();
         this.layer = Services.get(LayerService).getLayer("pixi");
         this.userInteractionEnabled = false;
         this.pixiMutators = [];
+        this.pixiUpperLimit = 120;
         this.gravity = 4;
         this.flapDistance = -16;
-        this.flapRotation = -0.32;
+        this.flapRotation = -0.4;
         this.flapRotationTimeout = 60;
     }
 
@@ -44,7 +50,9 @@ export class FlapPixiComponent extends AbstractComponent {
         this.flapButton.alpha = 0;
         this.layer.addChild(this.flapButton);
 
-        Services.get(CanvasService).registerForUpdates(() => this.onUpdate());
+        this.floorHitArea = new Rectangle(0, 735, 540, 185);
+
+        Services.get(CanvasService).registerForUpdates(this.onUpdate, this);
     }
 
     public playIntro(): Promise<any> {
@@ -62,22 +70,43 @@ export class FlapPixiComponent extends AbstractComponent {
         });
     }
 
+    protected playDeath(): Promise<any> {
+        // TODO - finish this
+        return new Promise<any>((resolve: (value?: any) => any, reject: (value?: any) => any) => {
+            gsap.timeline()
+            .to(this.pixi, {
+                y: "-=200",
+                duration: 1.2,
+                ease: Power3.easeOut
+            }).to(this.pixi, {
+                y: 1000,
+                duration: 3,
+                ease: Power3.easeOut,
+                onComplete: () => resolve()
+            });
+        });
+    }
+
     public enableUserInteraction(enable: boolean = true): void {
         this.userInteractionEnabled = enable;
+        this.flapButton.buttonMode = enable;
+        this.flapButton.interactive = enable;
     }
 
     protected onFlapButtonPressed(): void {
         if (this.userInteractionEnabled) {
-            this.pixi.rotation = this.flapRotation;
-            clearTimeout(this.pixiReset);
-            this.pixiReset = setTimeout(() => this.pixi.rotation = 0, this.flapRotationTimeout);
+            if (this.pixi.y >= this.pixiUpperLimit) {
+                this.pixi.rotation = this.flapRotation;
+                clearTimeout(this.pixiReset);
+                this.pixiReset = setTimeout(() => this.pixi.rotation = 0, this.flapRotationTimeout);
 
-            const mutator: Point = new Point(0, this.flapDistance * devicePixelRatio);
-            this.pixiMutators.push(mutator);
-            gsap.to(mutator, {
-                duration: 0.5, y: 0, ease: Power4.easeOut,
-                onComplete: () => this.pixiMutators.splice(this.pixiMutators.indexOf(mutator), 1)
-            });
+                const mutator: Point = new Point(0, this.flapDistance * devicePixelRatio);
+                this.pixiMutators.push(mutator);
+                gsap.to(mutator, {
+                    duration: 0.5, y: 0, ease: Power4.easeOut,
+                    onComplete: () => this.pixiMutators.splice(this.pixiMutators.indexOf(mutator), 1)
+                });
+            }
         }
     }
 
@@ -89,5 +118,18 @@ export class FlapPixiComponent extends AbstractComponent {
             });
             this.pixi.y += this.gravity * devicePixelRatio;
         }
+        if (this.floorHitArea.contains(this.pixi.x, this.pixi.y)) {
+            this.handleDeath();
+        }
+    }
+
+    protected handleDeath(): void {
+        this.enableUserInteraction(false);
+        Services.get(CanvasService).deRegisterFromUpdates(this.onUpdate, this);
+        this.playDeath().then(() => {
+            this.floorHitArea = null;
+            this.layer.removeChildren()
+            this.onPixiDeath.dispatch();
+        });
     }
 }

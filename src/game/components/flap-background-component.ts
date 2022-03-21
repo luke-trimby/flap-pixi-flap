@@ -54,7 +54,7 @@ export class FlapBackgroundComponent extends AbstractComponent {
                 });
             });
 
-            Services.get(CanvasService).registerForUpdates(() => this.onUpdate());
+            Services.get(CanvasService).registerForUpdates(this.onUpdate, this);
             resolve();
         });
     }

@@ -34,9 +34,15 @@ export class CanvasService extends AbstractService {
         this.renderEngine.render(this.gameStage);
     }
 
-    public registerForUpdates(updateFunc: () => any): void {
+    public registerForUpdates(updateFunc: (...params: any[]) => any, context: any): void {
         if (this.ticker?.started) {
-            this.ticker.add(() => updateFunc());
+            this.ticker.add(updateFunc, context);
+        }
+    }
+
+    public deRegisterFromUpdates(updateFunc: (...params: any[]) => any, context: any): void {
+        if (this.ticker?.started) {
+            this.ticker.remove(updateFunc, context);
         }
     }
 
