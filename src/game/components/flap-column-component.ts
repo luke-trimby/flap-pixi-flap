@@ -45,8 +45,8 @@ export class FlapColumnComponent extends AbstractComponent {
             top.position.set(0, -top.height);
 
             const topHit: Sprite = assetService.createSprite("column");
-            topHit.position.set(topHit.width * -0.25, -topHit.height);
-            topHit.scale.set(1.4, 1.1);
+            topHit.position.set(topHit.width * -0.25, topHit.height * -0.975);
+            topHit.scale.set(1.4, 1.05);
             topHit.alpha = 0.0;
             topHit.tint = 0x00ff00;
 
@@ -56,8 +56,8 @@ export class FlapColumnComponent extends AbstractComponent {
             btm.position.set(0, spacingY);
 
             const btmHit: Sprite = assetService.createSprite("column");
-            btmHit.position.set(btmHit.width * -0.25, spacingY - (btmHit.height * 0.1));
-            btmHit.scale.set(1.4, 1.1);
+            btmHit.position.set(btmHit.width * -0.25, spacingY - (btmHit.height * 0.075));
+            btmHit.scale.set(1.4, 1.05);
             btmHit.alpha = 0.0;
             btmHit.tint = 0x00ff00;
 
@@ -66,7 +66,7 @@ export class FlapColumnComponent extends AbstractComponent {
             container.interactive = false;
 
             this.layer.addChild(container);
-            container.position.set(350 * i, 240);
+            container.position.set((350 * i) - 200, 240);
             container.visible = false;
 
             this.columns.push({
@@ -123,7 +123,7 @@ export class FlapColumnComponent extends AbstractComponent {
                     const repositionY: number = column.repositionY + randomRangeInt(column.positionVariationMin.y, column.positionVariationMax.y);
                     const spacingY: number = randomRangeInt(column.spacingVariationMin, column.spacingVariationMax);
                     column.btm.position.y = spacingY;
-                    column.btmHit.position.y  = spacingY - (column.btmHit.height * 0.1);
+                    column.btmHit.position.y = spacingY - (column.btmHit.height * 0.05);
                     column.container.position.x = repositionX;
                     column.container.position.y = repositionY;
                     column.container.visible = true;

@@ -80,8 +80,9 @@ export class FlapPixiComponent extends AbstractComponent {
             gsap.timeline()
             .to(this.pixi, {
                 y: "-=100",
-                rotation: Math.pow(Math.PI, 2),
-                duration: 0.25
+                duration: 0.25,
+                delay: 0.25,
+                rotation: Math.pow(Math.PI, 2)
             })
             .to(this.pixi, {
                 y: 1000,
