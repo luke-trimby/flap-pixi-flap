@@ -1,4 +1,3 @@
-import { Log } from "enhance-log";
 import { Container, Text } from "pixi.js";
 import { SignalBinding } from "signals";
 import { FadeFromTo } from "../../core/commands/animation/fade-from-to";

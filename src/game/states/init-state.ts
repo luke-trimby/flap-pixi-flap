@@ -1,7 +1,7 @@
 import { Components } from "../../core/components/components";
 import { PreloaderComponent } from "../../core/components/preloader/preloader-component";
 import { State } from "../../core/services/state-machine/state";
-import { PromiseWrap } from "../../core/utils/promise-utils";
+import { PromiseChain, PromiseDelay, PromiseWrap } from "../../core/utils/promise-utils";
 import { FlapBackgroundComponent } from "../components/flap-background-component";
 import { FlapColumnComponent } from "../components/flap-column-component";
 import { FlapMenuComponent } from "../components/flap-menu-component";
@@ -25,13 +25,16 @@ export class InitState extends State {
     }
 
     public onEnter(): Promise<any> {
-        return PromiseWrap(() => {
-            this.preloaderComponent.hidePreloader();
-            this.backgroundComponent.create();
-            this.menuComponent.create();
-            this.menuComponent.show(false);
-            this.menuComponent.setInteractionEnabled(false);
-            this.scoreComponent.create();
-        }).then(() => this.complete());
+        return PromiseChain([
+            () => PromiseDelay(1),
+            () => PromiseWrap(() => {
+                this.preloaderComponent.hidePreloader();
+                this.backgroundComponent.create();
+                this.menuComponent.create();
+                this.menuComponent.show(false);
+                this.menuComponent.setInteractionEnabled(false);
+                this.scoreComponent.create();
+            })
+        ]).then(() => this.complete());
     }
 }

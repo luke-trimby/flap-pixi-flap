@@ -1,5 +1,6 @@
 
 import { Log } from "enhance-log";
+import FontFaceObserver = require('fontfaceobserver');
 import { Loader, LoaderResource } from "pixi.js";
 import { Signal } from "signals";
 import { AbstractService } from "../../data/abstract/abstract-service";
@@ -7,7 +8,6 @@ import { IAssetConfig } from "../../data/interface/asset-config";
 import { ILoadingStage } from "../../data/interface/loading-stage";
 import { AssetService } from "../asset/asset-service";
 import { Services } from "../services";
-import FontFaceObserver = require('fontfaceobserver');
 
 export class PreloaderSerice extends AbstractService {
 
