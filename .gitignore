@@ -1,4 +1,5 @@
 *.map
 *.log
 debug/
+dist/
 node_modules/
