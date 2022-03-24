@@ -1,5 +1,5 @@
 import gsap from "gsap";
-import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
+import { Container, Point, Sprite } from "pixi.js";
 import { Signal } from "signals";
 import { FadeFromTo } from "../../core/commands/animation/fade-from-to";
 import { Components } from "../../core/components/components";
@@ -47,7 +47,7 @@ export class FlapColumnComponent extends AbstractComponent {
             const topHit: Sprite = assetService.createSprite("column");
             topHit.position.set(topHit.width * -0.25, topHit.height * -0.975);
             topHit.scale.set(1.4, 1.05);
-            topHit.alpha = 0.0;
+            topHit.alpha = 0.4;
             topHit.tint = 0x00ff00;
 
             const spacingY: number = randomRangeInt(250, 400);
@@ -58,7 +58,7 @@ export class FlapColumnComponent extends AbstractComponent {
             const btmHit: Sprite = assetService.createSprite("column");
             btmHit.position.set(btmHit.width * -0.25, spacingY - (btmHit.height * 0.075));
             btmHit.scale.set(1.4, 1.05);
-            btmHit.alpha = 0.0;
+            btmHit.alpha = 0.4;
             btmHit.tint = 0x00ff00;
 
             const container: Container = new Container();
@@ -66,7 +66,7 @@ export class FlapColumnComponent extends AbstractComponent {
             container.interactive = false;
 
             this.layer.addChild(container);
-            container.position.set((350 * i) - 200, 240);
+            container.position.set((400 * i) - 200, 240);
             container.visible = false;
 
             this.columns.push({
@@ -74,8 +74,8 @@ export class FlapColumnComponent extends AbstractComponent {
                 repositionAtX: -150,
                 repositionX: 690,
                 repositionY: 240,
-                positionVariationMin: new Point(0, -200),
-                positionVariationMax: new Point(0, 300),
+                positionVariationMin: new Point(0, -100),
+                positionVariationMax: new Point(150, 300),
                 spacingVariationMin: 250,
                 spacingVariationMax: 400,
                 scoreAwarded: false
@@ -119,11 +119,14 @@ export class FlapColumnComponent extends AbstractComponent {
             this.columns.forEach((column: IColumnElementConfig) => {
                 column.container.x -= this.speed * devicePixelRatio;
                 if (column.container.position.x <= column.repositionAtX) {
-                    const repositionX: number = column.repositionX + randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
+                    const repositionX: number = column.repositionX;
+                    const variationX: number = randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
                     const repositionY: number = column.repositionY + randomRangeInt(column.positionVariationMin.y, column.positionVariationMax.y);
                     const spacingY: number = randomRangeInt(column.spacingVariationMin, column.spacingVariationMax);
-                    column.btm.position.y = spacingY;
-                    column.btmHit.position.y = spacingY - (column.btmHit.height * 0.05);
+                    column.top.position.x = variationX;
+                    column.topHit.position.x = variationX - (column.topHit.width * 0.25);
+                    column.btm.position.set(variationX, spacingY);
+                    column.btmHit.position.set(variationX - (column.topHit.width * 0.25), spacingY - (column.btmHit.height * 0.05));
                     column.container.position.x = repositionX;
                     column.container.position.y = repositionY;
                     column.container.visible = true;
@@ -138,7 +141,7 @@ export class FlapColumnComponent extends AbstractComponent {
                     }
                 }
                 if (!column.scoreAwarded && column.container.visible) {
-                    if (this.pixiComponent.getPixiSprite().position.x >= column.container.position.x + column.container.width) {
+                    if (this.pixiComponent.getPixiSprite().position.x >= column.topHit.position.x + column.topHit.width) {
                         column.scoreAwarded = true;
                         this.scoreComponent.incrementScore();
                     }
