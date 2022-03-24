@@ -1,6 +1,6 @@
 {
   "name": "flap-pixi-flap",
-  "version": "0.2.0",
+  "version": "1.0.2",
   "description": "Pixi.js Flappy Birds clone code test",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack-dev-server --hot",
