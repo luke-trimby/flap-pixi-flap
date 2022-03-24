@@ -71,8 +71,8 @@ export class FlapColumnComponent extends AbstractComponent {
 
             this.columns.push({
                 top, btm, topHit, btmHit, container,
-                repositionAtX: -150,
-                repositionX: 690,
+                repositionAtX: -300,
+                repositionX: 650,
                 repositionY: 240,
                 positionVariationMin: new Point(0, -100),
                 positionVariationMax: new Point(150, 300),
@@ -132,14 +132,14 @@ export class FlapColumnComponent extends AbstractComponent {
                     column.container.visible = true;
                     column.scoreAwarded = false;
                 }
-                if (this.hitTestingEnabled) {
-                    if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                        this.handleDeath();
-                    }
-                    else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                        this.handleDeath();
-                    }
-                }
+                // if (this.hitTestingEnabled) {
+                //     if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
+                //         this.handleDeath();
+                //     }
+                //     else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
+                //         this.handleDeath();
+                //     }
+                // }
                 if (!column.scoreAwarded && column.container.visible) {
                     if (this.pixiComponent.getPixiSprite().position.x >= (column.container.position.x + column.container.width)) {
                         column.scoreAwarded = true;
