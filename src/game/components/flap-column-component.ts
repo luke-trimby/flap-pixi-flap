@@ -132,14 +132,14 @@ export class FlapColumnComponent extends AbstractComponent {
                     column.container.visible = true;
                     column.scoreAwarded = false;
                 }
-                // if (this.hitTestingEnabled) {
-                //     if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                //         this.handleDeath();
-                //     }
-                //     else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                //         this.handleDeath();
-                //     }
-                // }
+                if (this.hitTestingEnabled) {
+                    if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
+                        this.handleDeath();
+                    }
+                    else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
+                        this.handleDeath();
+                    }
+                }
                 if (!column.scoreAwarded && column.container.visible) {
                     if (this.pixiComponent.getPixiSprite().position.x >= (column.container.position.x + column.container.width)) {
                         column.scoreAwarded = true;
