@@ -1,9 +1,12 @@
 import { Container, Text } from "pixi.js";
 import { FadeFromTo } from "../../core/commands/animation/fade-from-to";
+import { Components } from "../../core/components/components";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { flapHighScoreTextStyle, flapScoreTextStyle } from "../data/config/flap-text-styles";
+import { FlapBackgroundComponent } from "./flap-background-component";
+import { FlapColumnComponent } from "./flap-column-component";
 
 export class FlapScoreComponent extends AbstractComponent {
 
@@ -54,6 +57,8 @@ export class FlapScoreComponent extends AbstractComponent {
 
     public incrementScore(): void {
         this.setScore(this.currentScore + 1);
+        Components.get(FlapBackgroundComponent).increaseSpeedBy(0.025);
+        Components.get(FlapColumnComponent).increaseSpeedBy(0.025);
     }
 
     protected setScore(score: number): void {

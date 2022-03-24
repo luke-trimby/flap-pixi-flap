@@ -1,4 +1,3 @@
-import { Log } from "enhance-log";
 import gsap from "gsap/all";
 import { Container, TilingSprite } from "pixi.js";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
@@ -7,7 +6,6 @@ import { CanvasService } from "../../core/services/canvas/canvas-service";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { randomRangeInt } from "../../core/utils/number-utils";
-import { PromiseWrap } from "../../core/utils/promise-utils";
 import { parallaxElements } from "../data/config/flap-parallax-elements";
 import { IParallaxElementConfig } from "../data/interface/flap-parallax-element-config";
 
@@ -23,6 +21,10 @@ export class FlapBackgroundComponent extends AbstractComponent {
 
     public setMoving(isMoving: boolean = true): void {
         this.moving = isMoving;
+    }
+
+    public increaseSpeedBy(increase: number): void {
+        this.speed += increase;
     }
 
     public setSpeed(speed: number, duration: number = 0): Promise<any> {

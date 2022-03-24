@@ -89,6 +89,10 @@ export class FlapColumnComponent extends AbstractComponent {
         });
     }
 
+    public increaseSpeedBy(increase: number): void {
+        this.speed += increase;
+    }
+
     public enableHitTesting(enabled: boolean = true): void {
         this.hitTestingEnabled = enabled;
     }
