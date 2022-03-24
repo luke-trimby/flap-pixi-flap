@@ -1,8 +1,10 @@
 # Luke Trimby - Flap Pixi Flap - Flappy Bird Clone #
 
-A coding challenge made with Typescript and PIXI.js.
-It all started with the boilerplate code at: https://github.com/yahiko00/PixiProject
-Re-using some code and ideas from old projects (see zips in `./ref/`)
+Live Url: https://flap-pixi-flap.lukasone.co.uk/ 
+
+A coding challenge made with Typescript and PIXI.js. 
+It all started with the boilerplate code at: https://github.com/yahiko00/PixiProject 
+Re-using some code and ideas from old projects (see zips in `./ref/`) 
 
 Main features:
 
