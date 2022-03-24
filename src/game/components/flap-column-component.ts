@@ -120,8 +120,8 @@ export class FlapColumnComponent extends AbstractComponent {
                 column.container.x -= this.speed * devicePixelRatio;
                 if (column.container.position.x <= column.repositionAtX) {
                     const repositionX: number = column.repositionX;
-                    const variationX: number = randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
                     const repositionY: number = column.repositionY + randomRangeInt(column.positionVariationMin.y, column.positionVariationMax.y);
+                    const variationX: number = randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
                     const spacingY: number = randomRangeInt(column.spacingVariationMin, column.spacingVariationMax);
                     column.top.position.x = variationX;
                     column.topHit.position.x = variationX - (column.topHit.width * 0.25);
@@ -141,7 +141,7 @@ export class FlapColumnComponent extends AbstractComponent {
                     }
                 }
                 if (!column.scoreAwarded && column.container.visible) {
-                    if (this.pixiComponent.getPixiSprite().position.x >= column.topHit.position.x + column.topHit.width) {
+                    if (this.pixiComponent.getPixiSprite().position.x >= (column.container.position.x + column.container.width)) {
                         column.scoreAwarded = true;
                         this.scoreComponent.incrementScore();
                     }
