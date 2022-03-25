@@ -1,6 +1,7 @@
 import { Log } from "enhance-log";
 import { LoaderResource, Sprite, Texture } from "pixi.js";
 import { AbstractService } from "../../data/abstract/abstract-service";
+import { PolySprite } from "../../graphics/poly-sprite";
 
 export class AssetService extends AbstractService {
 
@@ -31,27 +32,27 @@ export class AssetService extends AbstractService {
         }
     }
 
-    public createSprite(name: string, atlas?: string): Sprite {
+    public createSprite(name: string, atlas?: string): PolySprite {
         if (atlas) {
             return this.createSpriteFromAtlas(name, atlas);
         }
         return this.createSpriteFromTexture(name);
     }
 
-    protected createSpriteFromTexture(name: string): PIXI.Sprite {
+    protected createSpriteFromTexture(name: string): PolySprite {
         const texture: Texture = this.getTexture(name);
-        let sprite: Sprite;
+        let sprite: PolySprite;
         if (texture) {
-            sprite = new Sprite(texture);
+            sprite = new PolySprite(texture);
         }
         return sprite;
     }
 
-    protected createSpriteFromAtlas(frameName: string, atlas: string): PIXI.Sprite {
+    protected createSpriteFromAtlas(frameName: string, atlas: string): PolySprite {
         const texture: Texture = this.getTextureFromAtlas(frameName, atlas);
-        let sprite: Sprite;
+        let sprite: PolySprite;
         if (texture) {
-            sprite = new Sprite(texture);
+            sprite = new PolySprite(texture);
         }
         return sprite;
     }

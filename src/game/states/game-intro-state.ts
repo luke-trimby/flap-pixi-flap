@@ -39,25 +39,23 @@ export class GameIntroState extends State {
         this.countDownText.anchor.set(0.5, 0.5);
         this.countDownText.position.set(270, 350);
         this.layer.addChild(this.countDownText);
+        this.pixiComponent.create();
+        this.pixiComponent.playIntro();
+        this.columnComponent.create();
+        this.columnComponent.setMoving();
+        this.columnComponent.setSpeed(ColumnSpeed.NORMAL, 1);
+        this.backgroundComponent.setSpeed(0.1);
+        this.backgroundComponent.setMoving();
+        this.backgroundComponent.setSpeed(1, 1);
+        this.scoreComponent.resetScore();
+        this.menuComponent.setInteractionEnabled(false);
 
         const chain: Array<() => Promise<any>> = [
-            () => PromiseWrap(() => {
-                this.pixiComponent.create();
-                this.columnComponent.create();
-                this.columnComponent.setMoving();
-                this.backgroundComponent.setSpeed(0.1);
-                this.backgroundComponent.setMoving();
-                this.backgroundComponent.setSpeed(1, 1);
-                this.pixiComponent.playIntro();
-                this.scoreComponent.resetScore();
-                this.columnComponent.setSpeed(ColumnSpeed.NORMAL, 1);
-                this.menuComponent.setInteractionEnabled(false);
-            }),
             () => this.scoreComponent.show(true, 1),
-            () => this.countDown("3"),
-            () => this.countDown("2"),
-            () => this.countDown("1"),
-            () => this.countDown("GO!")
+            () => this.countDown("3", 1),
+            () => this.countDown("2", 1),
+            () => this.countDown("1", 1),
+            () => this.countDown("GO!", 1)
         ];
 
         return PromiseChain(chain).then(() => this.complete());
@@ -67,7 +65,7 @@ export class GameIntroState extends State {
         return PromiseWrap(() => this.layer.removeChildren());
     }
 
-    protected countDown(text: string): Promise<any> {
+    protected countDown(text: string, duration: number = 1): Promise<any> {
         return new Promise<any>((resolve: (value?: any) => any) => {
             this.countDownText.text = text;
 
@@ -77,8 +75,8 @@ export class GameIntroState extends State {
             alphaText.position.set(270, 350);
             this.layer.addChild(alphaText);
 
-            gsap.to(alphaText.scale, { duration: 1, x: 12, y: 12 });
-            gsap.to(alphaText, { alpha: 0, duration: 1, onComplete: () => resolve() });
+            gsap.to(alphaText.scale, { duration, x: 12, y: 12 });
+            gsap.to(alphaText, { alpha: 0, duration, onComplete: () => resolve() });
         });
     }
 }

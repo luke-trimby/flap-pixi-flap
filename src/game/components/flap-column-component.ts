@@ -1,22 +1,26 @@
 import gsap from "gsap";
-import { Container, Point, Sprite } from "pixi.js";
+import { Container } from "pixi.js";
 import { Signal } from "signals";
+import { CollisionLevel } from "../../core/collision/collision-level";
+import { CollisionPoly } from "../../core/collision/collision-poly";
 import { FadeFromTo } from "../../core/commands/animation/fade-from-to";
 import { Components } from "../../core/components/components";
 import { AbstractComponent } from "../../core/data/abstract/abstract-component";
+import { PolySprite } from "../../core/graphics/poly-sprite";
 import { AssetService } from "../../core/services/asset/asset-service";
 import { CanvasService } from "../../core/services/canvas/canvas-service";
 import { LayerService } from "../../core/services/layer/layer-service";
 import { Services } from "../../core/services/services";
 import { randomRangeInt } from "../../core/utils/number-utils";
+import { btmColumnPolyPoints, topColumnPolyPoints } from "../data/config/flap-column-poly-point";
 import { ColumnSpeed } from "../data/flap-column-speed";
 import { IColumnElementConfig } from "../data/interface/flap-column-element-config";
 import { FlapPixiComponent } from "./flap-pixi-component";
 import { FlapScoreComponent } from "./flap-score-component";
 
 export class FlapColumnComponent extends AbstractComponent {
-
     public onPixiDeath: Signal;
+    protected assetService: AssetService;
     protected layer: Container;
     protected moving:  boolean;
     protected hitTestingEnabled:  boolean;
@@ -28,6 +32,7 @@ export class FlapColumnComponent extends AbstractComponent {
     public init(): void {
         this.onPixiDeath = new Signal();
         this.layer = Services.get(LayerService).getLayer("columns");
+        this.assetService = Services.get(AssetService);
         this.scoreComponent = Components.get(FlapScoreComponent);
         this.pixiComponent = Components.get(FlapPixiComponent);
         this.hitTestingEnabled = false;
@@ -37,50 +42,10 @@ export class FlapColumnComponent extends AbstractComponent {
     }
 
     public create(): void {
-        const assetService: AssetService = Services.get(AssetService);
         this.show();
 
-        for (let i: number = 1; i <= 2; i++) {
-            const top: Sprite = assetService.createSprite("column");
-            top.position.set(0, -top.height);
-
-            const topHit: Sprite = assetService.createSprite("column");
-            topHit.position.set(topHit.width * -0.25, topHit.height * -0.975);
-            topHit.scale.set(1.4, 1.05);
-            topHit.alpha = 0.0;
-            topHit.tint = 0x00ff00;
-
-            const spacingY: number = randomRangeInt(250, 400);
-
-            const btm: Sprite = assetService.createSprite("column");
-            btm.position.set(0, spacingY);
-
-            const btmHit: Sprite = assetService.createSprite("column");
-            btmHit.position.set(btmHit.width * -0.25, spacingY - (btmHit.height * 0.075));
-            btmHit.scale.set(1.4, 1.05);
-            btmHit.alpha = 0.0;
-            btmHit.tint = 0x00ff00;
-
-            const container: Container = new Container();
-            container.addChild(top, topHit, btm, btmHit);
-            container.interactive = false;
-
-            this.layer.addChild(container);
-            container.position.set((400 * i) - 200, 240);
-            container.visible = false;
-
-            this.columns.push({
-                top, btm, topHit, btmHit, container,
-                repositionAtX: -300,
-                repositionX: 650,
-                repositionY: 240,
-                positionVariationMin: new Point(0, -100),
-                positionVariationMax: new Point(150, 300),
-                spacingVariationMin: 250,
-                spacingVariationMax: 400,
-                scoreAwarded: false
-            });
-        }
+        this.spawnColumn(600, 240);
+        this.spawnColumn(1800, 240);
     }
 
     public setSpeed(speed: ColumnSpeed, duration: number = 0): Promise<any> {
@@ -120,38 +85,65 @@ export class FlapColumnComponent extends AbstractComponent {
 
     protected onUpdate(): void {
         if (this.moving) {
-            this.columns.forEach((column: IColumnElementConfig) => {
-                column.container.x -= this.speed * devicePixelRatio;
-                if (column.container.position.x <= column.repositionAtX) {
-                    const repositionX: number = column.repositionX;
-                    const repositionY: number = column.repositionY + randomRangeInt(column.positionVariationMin.y, column.positionVariationMax.y);
-                    const variationX: number = randomRangeInt(column.positionVariationMin.x, column.positionVariationMax.x);
-                    const spacingY: number = randomRangeInt(column.spacingVariationMin, column.spacingVariationMax);
-                    column.top.position.x = variationX;
-                    column.topHit.position.x = variationX - (column.topHit.width * 0.25);
-                    column.btm.position.set(variationX, spacingY);
-                    column.btmHit.position.set(variationX - (column.topHit.width * 0.25), spacingY - (column.btmHit.height * 0.05));
-                    column.container.position.x = repositionX;
-                    column.container.position.y = repositionY;
-                    column.container.visible = true;
-                    column.scoreAwarded = false;
-                }
+
+            for (let i: number = 0; i < this.columns.length; i++) {
+                const column = this.columns[i];
+
+                const movementX: number = this.speed * devicePixelRatio;
+                column.top.x -= movementX;
+                column.btm.x -= movementX;
+
+                column.top.update();
+                column.btm.update();
+
                 if (this.hitTestingEnabled) {
-                    if (column.topHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                        this.handleDeath();
+                    const pixi: PolySprite = this.pixiComponent.getPixiSprite();
+                    if (column.top.collisionPoly.intersectsBounds(pixi.collisionPoly)) {
+                        if (column.top.collisionPoly.intersectsShape(pixi.collisionPoly)) {
+                            this.handleDeath();
+                        }
                     }
-                    else if (column.btmHit.containsPoint(this.pixiComponent.getPixiSprite().position)) {
-                        this.handleDeath();
+                    else if (column.btm.collisionPoly.intersectsBounds(pixi.collisionPoly)) {
+                        if (column.btm.collisionPoly.intersectsShape(pixi.collisionPoly)) {
+                            this.handleDeath();
+                        }
                     }
                 }
-                if (!column.scoreAwarded && column.container.visible) {
-                    if (this.pixiComponent.getPixiSprite().position.x >= (column.container.position.x + column.container.width)) {
+
+                if (!column.scoreAwarded && column.top.visible) {
+                    if (this.pixiComponent.getPixiSprite().position.x >= (column.top.position.x + column.top.width)) {
                         column.scoreAwarded = true;
                         this.scoreComponent.incrementScore();
                     }
                 }
-            });
+
+                if (column.top.position.x <= column.despawnX) {
+                    this.columns.splice(i, 1);
+                    column.top.destroy();
+                    column.btm.destroy();
+                    this.spawnColumn(600, 240);
+                }
+            };
         }
+    }
+
+    protected spawnColumn(x: number, y: number): void {
+        const top: PolySprite = this.assetService.createSprite("column");
+        top.position.set(x, y - top.height);
+        top.collisionPoly = new CollisionPoly(top, topColumnPolyPoints);
+
+        const spacingY: number = randomRangeInt(250, 400);
+        const btm: PolySprite = this.assetService.createSprite("column");
+        btm.position.set(x, top.y + top.height + spacingY);
+        btm.collisionPoly = new CollisionPoly(btm, btmColumnPolyPoints);
+
+        this.layer.addChild(top, btm);
+
+        this.columns.push({
+            top, btm,
+            despawnX: -300,
+            scoreAwarded: false
+        });
     }
 
     protected handleDeath(): void {

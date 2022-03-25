@@ -5,6 +5,7 @@ import { ICanvasProperties } from "../../data/interface/canvas-properties";
 import { Size } from "../../data/size";
 
 export class CanvasService extends AbstractService {
+    private properties: ICanvasProperties;
     private ratio: number;
     private size: Size;
     private scale: Size;
@@ -14,8 +15,9 @@ export class CanvasService extends AbstractService {
     private ticker: Ticker;
     private htmlLayerContainerDiv: HTMLDivElement;
 
-    constructor(private properties: ICanvasProperties) {
+    constructor(properties: ICanvasProperties) {
         super();
+        this.properties = properties;
         Log.d(`[CanvasService] Initialising`);
     }
 
@@ -30,8 +32,8 @@ export class CanvasService extends AbstractService {
         return this.gameStage;
     }
 
-    public render() {
-        this.renderEngine.render(this.gameStage);
+    public get renderer(): Renderer {
+        return this.renderEngine;
     }
 
     public registerForUpdates(updateFunc: (...params: any[]) => any, context: any): void {
@@ -44,6 +46,10 @@ export class CanvasService extends AbstractService {
         if (this.ticker?.started) {
             this.ticker.remove(updateFunc, context);
         }
+    }
+
+    protected render() {
+        this.renderEngine.render(this.gameStage);
     }
 
     private injectCanvas(target: string, win: Window = window) {
