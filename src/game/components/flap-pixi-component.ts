@@ -29,7 +29,7 @@ export class FlapPixiComponent extends AbstractComponent {
     protected flapDistance: number;
     protected flapRotation: number;
     protected flapRotationTimeout: number;
-    protected flapGlide: number = 0.75;
+    protected flapGlide: number;
 
     public init(): void {
         this.onPixiDeath = new Signal();
@@ -38,10 +38,11 @@ export class FlapPixiComponent extends AbstractComponent {
         this.userInteractionEnabled = false;
         this.pixiMutators = [];
         this.pixiUpperLimit = 120;
-        this.gravity = 4;
-        this.flapDistance = -16;
+        this.gravity = 3.5;
+        this.flapDistance = -10;
         this.flapRotation = -0.5;
-        this.flapRotationTimeout = 60;
+        this.flapRotationTimeout = 90;
+        this.flapGlide = 0.85;
     }
 
     public create(): void {
