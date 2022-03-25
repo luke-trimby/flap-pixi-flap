@@ -1,17 +1,8 @@
-import { Container, Graphics, Point, Rectangle, Sprite } from "pixi.js";
+import { PolySprite } from "../../../core/graphics/poly-sprite";
 
 export interface IColumnElementConfig {
-    top: Sprite,
-    btm: Sprite;
-    topHit: Sprite,
-    btmHit: Sprite;
+    top: PolySprite,
+    btm: PolySprite;
     scoreAwarded: boolean;
-    container: Container;
-    repositionAtX: number;
-    repositionX: number;
-    repositionY: number;
-    positionVariationMin: Point;
-    positionVariationMax: Point;
-    spacingVariationMin: number;
-    spacingVariationMax: number;
+    despawnX: number;
 }
