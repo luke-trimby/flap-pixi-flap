@@ -27,6 +27,7 @@ export class MenuState extends State {
         return PromiseChain([
             () => this.menuComponent.showGameOverText(false),
             () => this.menuComponent.showGameNameText(true),
+            () => this.menuComponent.showLukeTrimbyText(true),
             () => this.menuComponent.showPlayButton(true),
             () => PromiseDelay(1),
             () => this.menuComponent.show(true, 0.5),

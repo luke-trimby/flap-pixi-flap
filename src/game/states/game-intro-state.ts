@@ -52,9 +52,9 @@ export class GameIntroState extends State {
 
         const chain: Array<() => Promise<any>> = [
             () => this.scoreComponent.show(true, 1),
-            () => this.countDown("3", 1),
-            () => this.countDown("2", 1),
-            () => this.countDown("1", 1),
+            () => this.countDown("3", 0.5),
+            () => this.countDown("2", 0.5),
+            () => this.countDown("1", 0.5),
             () => this.countDown("GO!", 1)
         ];
 

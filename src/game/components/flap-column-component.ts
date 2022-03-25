@@ -1,7 +1,6 @@
 import gsap from "gsap";
 import { Container } from "pixi.js";
 import { Signal } from "signals";
-import { CollisionLevel } from "../../core/collision/collision-level";
 import { CollisionPoly } from "../../core/collision/collision-poly";
 import { FadeFromTo } from "../../core/commands/animation/fade-from-to";
 import { Components } from "../../core/components/components";
@@ -28,6 +27,13 @@ export class FlapColumnComponent extends AbstractComponent {
     protected columns: IColumnElementConfig[];
     protected scoreComponent: FlapScoreComponent;
     protected pixiComponent: FlapPixiComponent;
+    protected spacingXMin: number;
+    protected spacingXMax: number;
+    protected spacingYMin: number;
+    protected spacingYMax: number;
+    protected variationYMin: number;
+    protected variationYMax: number;
+    protected columnSpacingX: number;
 
     public init(): void {
         this.onPixiDeath = new Signal();
@@ -37,6 +43,13 @@ export class FlapColumnComponent extends AbstractComponent {
         this.pixiComponent = Components.get(FlapPixiComponent);
         this.hitTestingEnabled = false;
         this.moving = false;
+        this.spacingXMin = -100;
+        this.spacingXMax = 100;
+        this.spacingYMin = 220;
+        this.spacingYMax = 375;
+        this.variationYMin = -100;
+        this.variationYMax = 200;
+        this.columnSpacingX = 400;
         this.speed = ColumnSpeed.NORMAL;
         this.columns = [];
     }
@@ -44,8 +57,10 @@ export class FlapColumnComponent extends AbstractComponent {
     public create(): void {
         this.show();
 
-        this.spawnColumn(600, 240);
-        this.spawnColumn(1800, 240);
+        const initialX: number = 1000;
+        for (let i : number = 0; i < 3; i++) {
+            this.spawnColumn(initialX + (this.columnSpacingX * i), 240);
+        }
     }
 
     public setSpeed(speed: ColumnSpeed, duration: number = 0): Promise<any> {
@@ -85,7 +100,6 @@ export class FlapColumnComponent extends AbstractComponent {
 
     protected onUpdate(): void {
         if (this.moving) {
-
             for (let i: number = 0; i < this.columns.length; i++) {
                 const column = this.columns[i];
 
@@ -121,18 +135,21 @@ export class FlapColumnComponent extends AbstractComponent {
                     this.columns.splice(i, 1);
                     column.top.destroy();
                     column.btm.destroy();
-                    this.spawnColumn(600, 240);
+                    this.spawnColumn(this.columns[this.columns.length - 1].top.x + this.columnSpacingX, 240);
                 }
             };
         }
     }
 
     protected spawnColumn(x: number, y: number): void {
+        x += randomRangeInt(this.spacingXMin, this.spacingXMax);
+        y += randomRangeInt(this.variationYMin, this.variationYMax);
+        const spacingY: number = randomRangeInt(this.spacingYMin, this.spacingYMax);
+
         const top: PolySprite = this.assetService.createSprite("column");
         top.position.set(x, y - top.height);
         top.collisionPoly = new CollisionPoly(top, topColumnPolyPoints);
 
-        const spacingY: number = randomRangeInt(250, 400);
         const btm: PolySprite = this.assetService.createSprite("column");
         btm.position.set(x, top.y + top.height + spacingY);
         btm.collisionPoly = new CollisionPoly(btm, btmColumnPolyPoints);
